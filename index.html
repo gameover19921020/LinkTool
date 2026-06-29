@@ -54,10 +54,16 @@
   .upload-zone .text { color:var(--text-muted); font-size:14px; }
   .upload-zone .text strong { color:var(--text); }
   .upload-preview { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; text-align:left; }
-  .preview-list { display:flex; gap:8px; flex-wrap:wrap; flex:1; min-width:180px; }
-  .preview-item { position:relative; width:64px; }
-  .preview-item img { width:64px; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border); display:block; }
+  .preview-list { display:flex; gap:10px; flex-wrap:wrap; flex:1; min-width:180px; }
+  .preview-item { position:relative; width:72px; height:72px; border-radius:10px; cursor:grab; transition:transform .16s ease, opacity .16s ease, box-shadow .16s ease; }
+  .preview-item:active { cursor:grabbing; }
+  .preview-item.dragging { opacity:.45; transform:scale(.96); }
+  .preview-item.drag-over { box-shadow:0 0 0 2px rgba(99,102,241,.95), 0 10px 26px rgba(0,0,0,.28); }
+  .preview-item img { width:72px; height:72px; object-fit:cover; border-radius:10px; border:1px solid var(--border); display:block; background:#0f0f16; pointer-events:none; }
   .preview-index { position:absolute; left:4px; top:4px; background:rgba(0,0,0,.68); color:white; font-size:10px; line-height:1; padding:3px 5px; border-radius:4px; }
+  .preview-remove { position:absolute; right:-6px; top:-6px; width:22px; height:22px; border:none; border-radius:99px; background:rgba(239,68,68,.94); color:white; font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.38); opacity:.88; transition:opacity .15s ease, transform .15s ease, background .15s ease; }
+  .preview-remove:hover { opacity:1; transform:scale(1.06); background:#dc2626; }
+  .preview-remove:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(239,68,68,.28), 0 6px 14px rgba(0,0,0,.38); }
   .image-info { font-size:12px; color:var(--text-muted); line-height:1.5; min-width:160px; }
   .mode-tabs { display:flex; gap:4px; background:#12121c; border-radius:8px; padding:4px; margin-bottom:16px; }
   .mode-tab { flex:1; padding:8px 16px; text-align:center; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:transparent; color:var(--text-muted); transition:all .2s; }
@@ -143,6 +149,10 @@
 	  .layout-option:hover { border-color:var(--primary); transform:translateY(-1px); }
 	  .layout-option.active { border-color:var(--primary); background:rgba(99,102,241,.12); }
 	  .layout-option img { width:100%; aspect-ratio:var(--layout-aspect,1 / 1); object-fit:cover; border-radius:5px; display:block; background:#0f0f16; }
+	  .layout-upload-option { min-height:118px; display:flex; flex-direction:column; }
+	  .layout-upload-visual { width:100%; aspect-ratio:var(--layout-aspect,1 / 1); border:1px dashed rgba(129,140,248,.55); border-radius:5px; background:rgba(99,102,241,.08); display:flex; align-items:center; justify-content:center; color:#c7d2fe; font-size:28px; font-weight:800; }
+	  .layout-upload-option.has-custom .layout-upload-visual { padding:0; border-style:solid; overflow:hidden; background:#0f0f16; }
+	  .layout-upload-option.has-custom .layout-upload-visual img { width:100%; height:100%; object-fit:cover; border:none; border-radius:0; }
 	  .layout-option-name { font-size:11px; margin-top:5px; color:var(--text-muted); }
 	  .layout-pagination { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px; }
 	  .layout-page-info { min-width:110px; text-align:center; font-size:12px; color:var(--text-muted); }
@@ -296,6 +306,7 @@
     <div class="layout-tabs" id="layoutTabs"></div>
     <div class="layout-options-grid" id="layoutOptionsGrid"></div>
     <div class="layout-pagination" id="layoutPagination"></div>
+    <input type="file" id="layoutUploadInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none" />
     <div class="layout-modal-note">选中的排版图会作为额外参考图随对应图片类型提交，用于约束构图、版面分区、文字与主体的大致位置。</div>
   </div>
 </div>
@@ -304,7 +315,7 @@
   <header>
     <h1>🎨 批量图片生成器</h1>
     <p>每张图单独设置提示词 · 批量并行生成</p>
-    <div class="version-badge" id="appVersionBadge">版本 v20260629-01</div>
+    <div class="version-badge" id="appVersionBadge">版本 </div>
   </header>
 
 	  <!-- API Key -->
@@ -327,15 +338,15 @@
         <label>参考图片</label>
         <div class="upload-zone" id="uploadZone">
           <div class="icon">📁</div>
-          <div class="text">拖拽 1-16 张参考图到这里，或 <strong>点击选择</strong></div>
+          <div class="text">拖拽或粘贴 1-16 张参考图到这里，或 <strong>点击选择</strong></div>
           <div class="upload-preview" id="previewArea" style="display:none">
             <div class="preview-list" id="previewList"></div>
             <div class="image-info" id="fileInfo"></div>
-            <button class="btn btn-outline btn-sm" id="removeImage" style="margin-top:4px">✕ 清空参考图</button>
+            <button type="button" class="btn btn-outline btn-sm" id="removeImage" style="margin-top:4px">✕ 清空参考图</button>
           </div>
         </div>
         <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none" />
-        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">JPG / PNG / WebP / GIF，单张最大 20MB，最多 16 张</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">JPG / PNG / WebP / GIF，单张最大 20MB，最多 16 张；复制图片后可直接按 Ctrl / ⌘ + V 粘贴</div>
         <div style="font-size:12px;color:var(--text-muted);margin-top:4px">建议上传干净、纯粹、白底、多角度图片。</div>
       </div>
     </div>
@@ -524,12 +535,12 @@
     </div>
   </div>
 
-  <footer>批量图片生成工具 <span class="footer-version" id="footerVersion">v20260629-01</span></footer>
+  <footer>批量图片生成工具 <span class="footer-version" id="footerVersion">v20260630-01</span></footer>
 </div>
 
 <script src="layout-presets.js"></script>
 <script>
-const APP_VERSION = 'v20260629-01';
+const APP_VERSION = 'v20260630-01';
 document.title = `批量图片生成工具 ${APP_VERSION}`;
 document.getElementById('appVersionBadge').textContent = `版本 ${APP_VERSION}`;
 document.getElementById('footerVersion').textContent = APP_VERSION;
@@ -545,6 +556,7 @@ const state = {
 	  planSignature: '',
 	  imageTypeSettings: {},
 	  layoutSelections: {},
+	  customLayouts: {},
 	  layoutReferenceCache: {},
 	  results: [],
   pendingPolls: [],
@@ -566,6 +578,12 @@ const state = {
 	    title: '白底主图',
 	    desc: '纯白背景，主体清晰，适合商品首图',
 	    prompt: '生成白底主图：背景必须为纯白色，产品居中展示，主体清晰完整，边缘干净，不改变商品形状、颜色、结构和材质细节。适合电商平台首图使用，画面专业、干净、可信。'
+	  },
+	  {
+	    key: 'main',
+	    title: '主图',
+	    desc: '突出商品主体，适合店铺首图和橱窗展示',
+	    prompt: '生成电商主图：以商品为绝对主体，画面干净高级，主体完整清晰，比例醒目，能快速吸引买家点击。背景可以简洁、有质感或轻度场景化，但不能喧宾夺主；不要改变商品形状、颜色、结构和材质细节。整体适合电商平台首图、店铺橱窗和广告入口使用。'
 	  },
 	  {
 	    key: 'function-scene',
@@ -755,6 +773,7 @@ const fileInfo = $('fileInfo');
 const previewArea = $('previewArea');
 const previewList = $('previewList');
 		const removeImage = $('removeImage');
+let draggedReferenceIndex = null;
 	const productName = $('productName');
 		const productSellingPoints = $('productSellingPoints');
 		const productUsage = $('productUsage');
@@ -807,6 +826,7 @@ const layoutModalClose = $('layoutModalClose');
 const layoutTabs = $('layoutTabs');
 const layoutOptionsGrid = $('layoutOptionsGrid');
 const layoutPagination = $('layoutPagination');
+const layoutUploadInput = $('layoutUploadInput');
 const LOCAL_ZIP_PROXY_URL = 'http://127.0.0.1:8787/zip';
 const LOCAL_IMAGE_PROXY_URL = 'http://127.0.0.1:8787/image';
 
@@ -926,6 +946,10 @@ function getImageTypeSetting(key) {
 }
 
 function getLayoutById(id) {
+  if (!id) return null;
+  if (String(id).startsWith('custom:')) {
+    return Object.values(state.customLayouts).find(layout => layout.id === id) || null;
+  }
   return layoutPresets.find(layout => layout.id === id) || null;
 }
 
@@ -936,11 +960,29 @@ function getPreferredLayoutGroup() {
   return 'square';
 }
 
+function getCustomLayoutId(typeKey) {
+  return `custom:${typeKey}`;
+}
+
+function renderCustomLayoutUploadOption(selectedId) {
+  const customLayout = state.customLayouts[state.activeLayoutTarget];
+  const active = customLayout?.id === selectedId;
+  const visual = customLayout?.image
+    ? `<img src="${customLayout.image}" alt="${escapeHtml(customLayout.name)}" />`
+    : '+';
+  return `
+    <button type="button" class="layout-option layout-upload-option ${customLayout ? 'has-custom' : ''} ${active ? 'active' : ''}" data-role="upload-custom-layout">
+      <div class="layout-upload-visual">${visual}</div>
+      <div class="layout-option-name">${customLayout ? '上传我的排版（已上传）' : '上传我的排版'}</div>
+    </button>
+  `;
+}
+
 function renderLayoutPickerRow(type) {
   const selectedLayout = getLayoutById(state.layoutSelections[type.key]);
   const thumbClass = selectedLayout ? 'layout-picked-thumb show' : 'layout-picked-thumb';
   const title = selectedLayout
-    ? `<strong>${escapeHtml(selectedLayout.name)}</strong><span>${escapeHtml(selectedLayout.groupLabel)}排版参考</span>`
+    ? `<strong>${escapeHtml(selectedLayout.name)}</strong><span>${escapeHtml(selectedLayout.groupLabel || '自定义')}排版参考</span>`
     : '<strong>未选择排版</strong><span>可选择一个排版参考图</span>';
   return `
     <div class="layout-picker-row">
@@ -1081,15 +1123,103 @@ modeTabs.forEach(tab => {
 });
 
 // File upload
-uploadZone.addEventListener('click', () => fileInput.click());
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('click', e => {
+  if (e.target.closest('button') || e.target.closest('.preview-item')) return;
+  fileInput.click();
+});
+uploadZone.addEventListener('dragover', e => {
+  if (draggedReferenceIndex !== null) return;
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
 uploadZone.addEventListener('drop', e => {
   e.preventDefault(); uploadZone.classList.remove('dragover');
+  if (draggedReferenceIndex !== null) {
+    clearReferenceDragState();
+    return;
+  }
   if (e.dataTransfer.files.length) handleFiles(Array.from(e.dataTransfer.files));
 });
 fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFiles(Array.from(fileInput.files)); });
-removeImage.addEventListener('click', clearUpload);
+document.addEventListener('paste', e => {
+  if (state.mode !== 'img2img') return;
+  const pastedFiles = getClipboardImageFiles(e.clipboardData);
+  if (pastedFiles.length === 0) return;
+  e.preventDefault();
+  handleFiles(pastedFiles, { append: true, source: 'paste' });
+});
+removeImage.addEventListener('click', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  clearUpload();
+});
+
+previewList.addEventListener('click', e => {
+  const removeBtn = e.target.closest('[data-action="remove-reference"]');
+  if (!removeBtn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  removeReferenceImage(Number(removeBtn.dataset.index));
+});
+
+previewList.addEventListener('dragstart', e => {
+  if (e.target.closest('button')) {
+    e.preventDefault();
+    return;
+  }
+  const item = e.target.closest('.preview-item');
+  if (!item) return;
+  draggedReferenceIndex = Number(item.dataset.index);
+  item.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(draggedReferenceIndex));
+});
+
+previewList.addEventListener('dragover', e => {
+  if (draggedReferenceIndex === null) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect = 'move';
+  const item = e.target.closest('.preview-item');
+  clearReferenceDropTargets(item);
+  if (item && Number(item.dataset.index) !== draggedReferenceIndex) item.classList.add('drag-over');
+});
+
+previewList.addEventListener('dragleave', e => {
+  const item = e.target.closest('.preview-item');
+  if (item && !item.contains(e.relatedTarget)) item.classList.remove('drag-over');
+});
+
+previewList.addEventListener('drop', e => {
+  if (draggedReferenceIndex === null) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const item = e.target.closest('.preview-item');
+  const targetIndex = item ? Number(item.dataset.index) : state.referenceFiles.length - 1;
+  moveReferenceImage(draggedReferenceIndex, targetIndex);
+  clearReferenceDragState();
+});
+
+previewList.addEventListener('dragend', clearReferenceDragState);
+
+function invalidateReferenceUploadCache() {
+  state.uploadedUrls = [];
+  fileInput.value = '';
+}
+
+function clearReferenceDropTargets(exceptItem = null) {
+  previewList.querySelectorAll('.preview-item.drag-over').forEach(item => {
+    if (item !== exceptItem) item.classList.remove('drag-over');
+  });
+}
+
+function clearReferenceDragState() {
+  draggedReferenceIndex = null;
+  previewList.querySelectorAll('.preview-item').forEach(item => {
+    item.classList.remove('dragging', 'drag-over');
+  });
+}
 
 function clearUpload() {
   state.referenceFiles = [];
@@ -1101,6 +1231,69 @@ function clearUpload() {
   fileInfo.textContent = '';
   uploadZone.classList.remove('has-file');
   rebuildPromptCards();
+}
+
+function removeReferenceImage(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= state.referenceFiles.length) return;
+  const [removedFile] = state.referenceFiles.splice(index, 1);
+  state.referencePreviews.splice(index, 1);
+  invalidateReferenceUploadCache();
+  renderReferencePreviews({ log: false });
+  rebuildPromptCards();
+  const remaining = state.referenceFiles.length;
+  const name = removedFile?.name ? `：${removedFile.name}` : '';
+  logMsg(`已删除参考图 #${index + 1}${name}${remaining ? `，剩余 ${remaining} 张` : ''}`, 'success');
+}
+
+function moveReferenceImage(fromIndex, targetIndex) {
+  const count = state.referenceFiles.length;
+  if (!Number.isInteger(fromIndex) || !Number.isInteger(targetIndex)) return;
+  if (fromIndex < 0 || fromIndex >= count) return;
+  const nextIndex = Math.max(0, Math.min(targetIndex, count - 1));
+  if (fromIndex === nextIndex) return;
+
+  const [file] = state.referenceFiles.splice(fromIndex, 1);
+  const [preview] = state.referencePreviews.splice(fromIndex, 1);
+  state.referenceFiles.splice(nextIndex, 0, file);
+  state.referencePreviews.splice(nextIndex, 0, preview);
+  invalidateReferenceUploadCache();
+  renderReferencePreviews({ log: false });
+  rebuildPromptCards();
+  logMsg(`已调整参考图顺序：#${fromIndex + 1} → #${nextIndex + 1}`, 'success');
+}
+
+function getClipboardImageFiles(clipboardData) {
+  if (!clipboardData) return [];
+  const directFiles = Array.from(clipboardData.files || []).filter(file => file?.type?.startsWith('image/'));
+  if (directFiles.length) return directFiles.map(normalizeClipboardImageFile);
+
+  return Array.from(clipboardData.items || [])
+    .filter(item => item.kind === 'file' && item.type?.startsWith('image/'))
+    .map(item => item.getAsFile())
+    .filter(Boolean)
+    .map(normalizeClipboardImageFile);
+}
+
+function normalizeClipboardImageFile(file, index = 0) {
+  if (file.name) return file;
+  const ext = mimeToImageExtension(file.type);
+  const name = `clipboard-image-${Date.now()}-${index + 1}.${ext}`;
+  try {
+    return new File([file], name, { type: file.type || 'image/png', lastModified: Date.now() });
+  } catch (err) {
+    try { Object.defineProperty(file, 'name', { value: name }); } catch (defineErr) {}
+    return file;
+  }
+}
+
+function mimeToImageExtension(type = '') {
+  const map = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+  };
+  return map[type] || 'png';
 }
 
 function validateReferenceFile(file) {
@@ -1213,11 +1406,29 @@ async function resolveLayoutReferenceImage(layout) {
   }
 }
 
-async function handleFiles(files) {
-  const incoming = files.filter(file => file && file.type?.startsWith('image/'));
+function getReferenceSizeText(files) {
+  const totalSize = files.reduce((sum, file) => sum + (file.size || 0), 0);
+  return totalSize > 1048576 ? `${(totalSize/1048576).toFixed(1)} MB` : `${(totalSize/1024).toFixed(0)} KB`;
+}
+
+async function handleFiles(files, options = {}) {
+  const append = options.append === true;
+  const source = options.source || 'select';
+  const incoming = Array.from(files || []).filter(file => file && file.type?.startsWith('image/'));
   if (incoming.length === 0) { logMsg('请选择图片文件', 'error'); return; }
-  const limited = incoming.slice(0, 16);
-  if (incoming.length > 16) logMsg(`最多支持 16 张参考图，已取前 16 张`, 'warn');
+
+  const currentCount = append ? state.referenceFiles.length : 0;
+  const availableSlots = 16 - currentCount;
+  if (availableSlots <= 0) {
+    logMsg('参考图最多支持 16 张，请先删除不需要的图片', 'warn');
+    return;
+  }
+
+  const limited = incoming.slice(0, availableSlots);
+  if (incoming.length > availableSlots) {
+    const action = append ? '追加' : '取';
+    logMsg(`最多支持 16 张参考图，已${action}前 ${availableSlots} 张`, 'warn');
+  }
 
   const errors = [];
   for (const file of limited) {
@@ -1229,7 +1440,8 @@ async function handleFiles(files) {
     return;
   }
 
-  const totalSize = limited.reduce((sum, file) => sum + file.size, 0);
+  const nextFiles = append ? [...state.referenceFiles, ...limited] : limited;
+  const totalSize = nextFiles.reduce((sum, file) => sum + (file.size || 0), 0);
   if (totalSize > 256*1024*1024) {
     logMsg('参考图总大小超过 256MB，请减少图片数量或压缩后再试', 'error');
     return;
@@ -1237,18 +1449,23 @@ async function handleFiles(files) {
 
   try {
     const previews = await Promise.all(limited.map(readFileAsDataUrl));
-    state.referenceFiles = limited;
-    state.referencePreviews = previews;
-    state.uploadedUrls = [];
-    fileInput.value = '';
-    renderReferencePreviews();
+    state.referenceFiles = nextFiles;
+    state.referencePreviews = append ? [...state.referencePreviews, ...previews] : previews;
+    invalidateReferenceUploadCache();
+    renderReferencePreviews({ log: false });
     rebuildPromptCards();
+    const sizeText = getReferenceSizeText(state.referenceFiles);
+    if (source === 'paste') {
+      logMsg(`已粘贴 ${limited.length} 张参考图，当前共 ${state.referenceFiles.length} 张 (${sizeText})`, 'success');
+    } else {
+      logMsg(`已选择 ${state.referenceFiles.length} 张参考图 (${sizeText})`);
+    }
   } catch (err) {
     logMsg(err.message || '读取参考图失败', 'error');
   }
 }
 
-function renderReferencePreviews() {
+function renderReferencePreviews(options = {}) {
   const files = state.referenceFiles;
   if (files.length === 0) {
     previewArea.style.display = 'none';
@@ -1257,18 +1474,22 @@ function renderReferencePreviews() {
     fileInfo.textContent = '';
     return;
   }
-  previewList.innerHTML = state.referencePreviews.map((src, idx) => `
-    <div class="preview-item">
+  previewList.innerHTML = state.referencePreviews.map((src, idx) => {
+    const file = files[idx];
+    const title = escapeHtml(file?.name || `参考图 ${idx + 1}`);
+    return `
+    <div class="preview-item" draggable="true" data-index="${idx}" title="${title}">
       <img src="${src}" alt="参考图 ${idx+1}" />
       <span class="preview-index">#${idx+1}</span>
+      <button type="button" class="preview-remove" data-action="remove-reference" data-index="${idx}" aria-label="删除参考图 ${idx+1}" title="删除">×</button>
     </div>
-  `).join('');
-  const totalSize = files.reduce((sum, file) => sum + file.size, 0);
-  const sizeText = totalSize > 1048576 ? `${(totalSize/1048576).toFixed(1)} MB` : `${(totalSize/1024).toFixed(0)} KB`;
+  `;
+  }).join('');
+  const sizeText = getReferenceSizeText(files);
   fileInfo.innerHTML = `${files.length} 张参考图<br>${sizeText} 总大小<br>提交时会全部作为参考图`;
   previewArea.style.display = 'flex';
   uploadZone.classList.add('has-file');
-  logMsg(`已选择 ${files.length} 张参考图 (${sizeText})`);
+  if (options.log !== false) logMsg(`已选择 ${files.length} 张参考图 (${sizeText})`);
 }
 
 size.addEventListener('change', updateResolutionNote);
@@ -1394,9 +1615,9 @@ function openLayoutPicker(typeKey) {
   if (!type) return;
   state.activeLayoutTarget = typeKey;
   const selectedLayout = getLayoutById(state.layoutSelections[typeKey]);
-  state.activeLayoutGroup = selectedLayout?.group || getPreferredLayoutGroup();
+  state.activeLayoutGroup = selectedLayout && !selectedLayout.custom ? selectedLayout.group : getPreferredLayoutGroup();
   const groupOptions = layoutPresets.filter(layout => layout.group === state.activeLayoutGroup);
-  const selectedIndex = selectedLayout ? groupOptions.findIndex(layout => layout.id === selectedLayout.id) : -1;
+  const selectedIndex = selectedLayout && !selectedLayout.custom ? groupOptions.findIndex(layout => layout.id === selectedLayout.id) : -1;
   state.activeLayoutPage = selectedIndex >= 0 ? Math.floor(selectedIndex / LAYOUT_PAGE_SIZE) : 0;
   layoutModalTitle.textContent = `为「${type.title}」选择排版参考`;
   renderLayoutPicker();
@@ -1423,16 +1644,18 @@ function renderLayoutPicker() {
   state.activeLayoutPage = Math.max(0, Math.min(state.activeLayoutPage || 0, pageCount - 1));
   const start = state.activeLayoutPage * LAYOUT_PAGE_SIZE;
   const pageOptions = options.slice(start, start + LAYOUT_PAGE_SIZE);
+  const customUploadOption = renderCustomLayoutUploadOption(selectedId);
   layoutOptionsGrid.style.setProperty('--layout-aspect', currentGroup.aspect);
   layoutOptionsGrid.className = `layout-options-grid ${currentGroup.key}`;
-  layoutOptionsGrid.innerHTML = pageOptions.map(layout => `
+  const presetOptionsHtml = pageOptions.map(layout => `
     <button type="button" class="layout-option ${layout.id === selectedId ? 'active' : ''}" data-layout-id="${layout.id}">
       <img src="${layout.image}" alt="${escapeHtml(layout.name)}" loading="lazy" decoding="async" />
       <div class="layout-option-name">${escapeHtml(layout.name)}</div>
     </button>
   `).join('');
+  layoutOptionsGrid.innerHTML = customUploadOption + presetOptionsHtml;
   if (options.length === 0) {
-    layoutOptionsGrid.innerHTML = '<div class="field-note">暂无可用排版参考图，请确认 layout-presets.js 文件在当前 HTML 同目录。</div>';
+    layoutOptionsGrid.innerHTML = customUploadOption + '<div class="field-note">暂无可用排版参考图，请确认 layout-presets.js 文件在当前 HTML 同目录。</div>';
     layoutPagination.innerHTML = '';
     return;
   }
@@ -1459,12 +1682,53 @@ layoutPagination.addEventListener('click', e => {
 });
 
 layoutOptionsGrid.addEventListener('click', e => {
+  const uploadOption = e.target.closest('[data-role="upload-custom-layout"]');
+  if (uploadOption && state.activeLayoutTarget) {
+    layoutUploadInput.value = '';
+    layoutUploadInput.click();
+    return;
+  }
   const option = e.target.closest('.layout-option');
   if (!option || !state.activeLayoutTarget) return;
+  if (!option.dataset.layoutId) return;
   state.layoutSelections[state.activeLayoutTarget] = option.dataset.layoutId;
   closeLayoutPicker();
   renderImageTypeGrid();
   rebuildPromptCards();
+});
+
+layoutUploadInput.addEventListener('change', async () => {
+  if (!state.activeLayoutTarget || !layoutUploadInput.files.length) return;
+  const file = layoutUploadInput.files[0];
+  const err = validateReferenceFile(file);
+  if (err) {
+    logMsg(err, 'error');
+    layoutUploadInput.value = '';
+    return;
+  }
+  try {
+    const preview = await readFileAsDataUrl(file);
+    const typeKey = state.activeLayoutTarget;
+    const id = getCustomLayoutId(typeKey);
+    state.customLayouts[typeKey] = {
+      id,
+      name: file.name ? `我的排版：${file.name}` : '我的排版',
+      group: 'custom',
+      groupLabel: '自定义',
+      image: preview,
+      dataScript: '',
+      custom: true,
+    };
+    state.layoutSelections[typeKey] = id;
+    layoutUploadInput.value = '';
+    closeLayoutPicker();
+    renderImageTypeGrid();
+    rebuildPromptCards();
+    logMsg(`已上传自定义排版参考：${file.name || '我的排版'}`, 'success');
+  } catch (uploadErr) {
+    layoutUploadInput.value = '';
+    logMsg(uploadErr.message || '读取自定义排版失败', 'error');
+  }
 });
 
 layoutModalClose.addEventListener('click', closeLayoutPicker);
@@ -2601,6 +2865,8 @@ clearBtn.addEventListener('click', () => {
   state.promptMeta = [];
   state.planSignature = '';
   state.imageTypeSettings = {};
+  state.layoutSelections = {};
+  state.customLayouts = {};
   renderImageTypeGrid();
   state.prompts = [];
   rebuildPromptCards();
