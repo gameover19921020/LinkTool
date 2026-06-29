@@ -214,12 +214,38 @@
   .task-chip.fail { border-color:var(--error); color:var(--error); }
   .task-chip.timeout { border-color:var(--warning); color:var(--warning); }
   .task-chip .spin { animation:spin 1s linear infinite; }
+  .task-list-panel { margin:10px 0 12px; border:1px solid var(--border); border-radius:10px; background:#101018; overflow:hidden; }
+  .task-list-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-bottom:1px solid var(--border); }
+  .task-list-title { font-size:13px; font-weight:700; color:var(--text); }
+  .task-list-count { font-size:12px; color:var(--text-muted); }
+  .task-table-wrap { overflow-x:auto; }
+  .task-table { width:100%; border-collapse:collapse; min-width:760px; }
+  .task-table th, .task-table td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.06); text-align:left; vertical-align:middle; font-size:12px; }
+  .task-table th { color:var(--text-muted); font-weight:600; background:#0c0c13; }
+  .task-table tr:last-child td { border-bottom:none; }
+  .task-id { max-width:220px; color:#c7d2fe; font-family:'JetBrains Mono','Fira Code',monospace; word-break:break-all; }
+  .task-time { color:var(--text-muted); white-space:nowrap; }
+  .task-status { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:99px; border:1px solid var(--border); color:var(--text-muted); white-space:nowrap; }
+  .task-status.completed { border-color:rgba(34,197,94,.55); color:var(--success); background:rgba(34,197,94,.08); }
+  .task-status.failed, .task-status.cancelled { border-color:rgba(239,68,68,.55); color:var(--error); background:rgba(239,68,68,.08); }
+  .task-status.timeout, .task-status.query_error { border-color:rgba(245,158,11,.55); color:var(--warning); background:rgba(245,158,11,.08); }
+  .task-status.polling, .task-status.processing, .task-status.refreshing, .task-status.submitted { border-color:rgba(99,102,241,.55); color:#a5b4fc; background:rgba(99,102,241,.08); }
+  .task-preview { width:72px; }
+  .task-preview-box { width:56px; height:56px; border-radius:8px; border:1px solid var(--border); background:#0a0a10; display:flex; align-items:center; justify-content:center; overflow:hidden; color:var(--text-muted); font-size:18px; }
+  .task-preview-box img { width:100%; height:100%; object-fit:cover; display:block; }
+  .task-refresh-btn { padding:6px 10px; border:1px solid var(--border); border-radius:7px; background:#12121c; color:var(--text); cursor:pointer; font-size:12px; font-weight:700; transition:border-color .15s,color .15s,opacity .15s; }
+  .task-refresh-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .task-refresh-btn:disabled { opacity:.45; cursor:not-allowed; border-color:var(--border); color:var(--text-muted); }
   @keyframes spin { to{transform:rotate(360deg)} }
   footer { text-align:center; padding:24px; color:var(--text-muted); font-size:12px; margin-top:auto; }
   footer a { color:var(--primary); text-decoration:none; }
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1000; align-items:center; justify-content:center; padding:24px; }
   .modal-overlay.show { display:flex; }
-  .modal-overlay img { max-width:90vw; max-height:90vh; border-radius:8px; box-shadow:0 0 40px rgba(0,0,0,.5); }
+  .modal-content { display:flex; flex-direction:column; align-items:center; gap:10px; max-width:92vw; max-height:92vh; }
+  .modal-content img { max-width:90vw; max-height:82vh; border-radius:8px; box-shadow:0 0 40px rgba(0,0,0,.5); object-fit:contain; }
+  .modal-actions { display:flex; justify-content:center; gap:8px; }
+  .modal-save-btn { border:1px solid rgba(255,255,255,.18); border-radius:8px; background:rgba(34,197,94,.92); color:white; cursor:pointer; font-size:14px; font-weight:700; padding:9px 16px; box-shadow:0 8px 24px rgba(0,0,0,.28); }
+  .modal-save-btn:hover { background:rgba(22,163,74,.96); }
   .modal-overlay .close-modal { position:absolute; top:16px; right:16px; background:rgba(255,255,255,.1); border:none; color:white; font-size:24px; width:40px; height:40px; border-radius:99px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .modal-overlay .close-modal:hover { background:rgba(255,255,255,.2); }
   .modal-nav { position:absolute; top:50%; transform:translateY(-50%); width:46px; height:64px; border:none; border-radius:10px; background:rgba(255,255,255,.12); color:white; cursor:pointer; font-size:34px; line-height:1; display:flex; align-items:center; justify-content:center; transition:background .15s,opacity .15s; }
@@ -228,7 +254,7 @@
   .modal-prev { left:20px; }
   .modal-next { right:20px; }
   .modal-counter { position:absolute; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(0,0,0,.58); color:white; border:1px solid rgba(255,255,255,.14); border-radius:99px; padding:6px 12px; font-size:13px; }
-	  @media (max-width:640px) { .form-row-2,.form-row-3{grid-template-columns:1fr} .api-key-row{flex-direction:column} .api-key-row .btn{width:100%} .prompt-input-row{grid-template-columns:1fr} .prompt-template-btn{min-height:42px; flex-direction:row} .template-picker{padding:16px; max-height:90vh} .template-picker-title{font-size:20px} .template-grid{grid-template-columns:1fr} .image-type-grid{grid-template-columns:1fr} .result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .batch-actions{flex-direction:column} }
+	  @media (max-width:640px) { .form-row-2,.form-row-3{grid-template-columns:1fr} .api-key-row{flex-direction:column} .api-key-row .btn{width:100%} .prompt-input-row{grid-template-columns:1fr} .prompt-template-btn{min-height:42px; flex-direction:row} .template-picker{padding:16px; max-height:90vh} .template-picker-title{font-size:20px} .template-grid{grid-template-columns:1fr} .image-type-grid{grid-template-columns:1fr} .result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .batch-actions{flex-direction:column} .task-list-head{align-items:flex-start; flex-direction:column} .task-table{min-width:700px} }
 </style>
 </head>
 <body>
@@ -236,7 +262,12 @@
 <div class="modal-overlay" id="modalOverlay">
   <button class="close-modal" id="closeModal">✕</button>
   <button class="modal-nav modal-prev" id="modalPrev" aria-label="上一张">‹</button>
-  <img id="modalImage" alt="" />
+  <div class="modal-content">
+    <img id="modalImage" alt="" />
+    <div class="modal-actions">
+      <button class="modal-save-btn" id="modalSaveAs">另存为</button>
+    </div>
+  </div>
   <button class="modal-nav modal-next" id="modalNext" aria-label="下一张">›</button>
   <div class="modal-counter" id="modalCounter">1 / 1</div>
 </div>
@@ -472,6 +503,7 @@
     </div>
     <div class="progress-bar" id="progressBar"><div class="fill" style="width:0%"></div></div>
     <div id="taskChipsContainer"></div>
+    <div id="taskListContainer"></div>
     <div class="log" id="log">就绪</div>
 
     <!-- Results -->
@@ -509,6 +541,7 @@ const state = {
 	  results: [],
   pendingPolls: [],
   taskChips: [],
+  tasks: [],
   submittedCount: 0,
   running: false,
   cancelled: false,
@@ -742,6 +775,7 @@ const continuePollBtn = $('continuePollBtn');
 const log = $('log');
 const progressBar = $('progressBar');
 const taskChipsContainer = $('taskChipsContainer');
+const taskListContainer = $('taskListContainer');
 const resultArea = $('resultArea');
 const resultGrid = $('resultGrid');
 const resultStats = $('resultStats');
@@ -755,6 +789,7 @@ const closeModal = $('closeModal');
 const modalPrev = $('modalPrev');
 const modalNext = $('modalNext');
 const modalCounter = $('modalCounter');
+const modalSaveAs = $('modalSaveAs');
 const templateOverlay = $('templateOverlay');
 const templateGrid = $('templateGrid');
 const templateClose = $('templateClose');
@@ -764,6 +799,8 @@ const layoutModalClose = $('layoutModalClose');
 const layoutTabs = $('layoutTabs');
 const layoutOptionsGrid = $('layoutOptionsGrid');
 const layoutPagination = $('layoutPagination');
+const LOCAL_ZIP_PROXY_URL = 'http://127.0.0.1:8787/zip';
+const LOCAL_IMAGE_PROXY_URL = 'http://127.0.0.1:8787/image';
 
 // ============ HELPERS ============
 function logMsg(msg, type = 'info') {
@@ -1262,6 +1299,11 @@ function moveModal(step) {
 closeModal.addEventListener('click', closeModalPreview);
 modalPrev.addEventListener('click', e => { e.stopPropagation(); moveModal(-1); });
 modalNext.addEventListener('click', e => { e.stopPropagation(); moveModal(1); });
+modalSaveAs.addEventListener('click', async e => {
+  e.stopPropagation();
+  const item = state.results[state.previewIndex];
+  if (item?.url) await saveImageAs(item);
+});
 modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) modalOverlay.classList.remove('show'); });
 document.addEventListener('keydown', e => {
   if (modalOverlay.classList.contains('show')) {
@@ -1551,6 +1593,10 @@ applyGlobalBtn.addEventListener('click', () => {
 
 // ============ API ============
 const POLL_TIMEOUT_CODE = 'POLL_TIMEOUT';
+const POLL_QUERY_ERROR_CODE = 'POLL_QUERY_ERROR';
+const POLL_INTERVAL_MS = 2500;
+const INITIAL_POLL_MAX_ATTEMPTS = 480;   // 约 20 分钟
+const CONTINUE_POLL_MAX_ATTEMPTS = 480;  // 每次继续轮询再追加约 20 分钟
 const SERVICE_BASE = decodeRuntimeText([104,116,116,112,115,58,47,47,97,112,105,46,97,112,105,98,46,97,105]);
 const IMAGE_MODEL = decodeRuntimeText([103,112,116,45,105,109,97,103,101,45,50]);
 
@@ -1562,10 +1608,21 @@ function serviceUrl(path) {
   return `${SERVICE_BASE}${path}`;
 }
 
-function createPollTimeoutError() {
-  const err = new Error('轮询超时');
+function formatPollWindow(maxAttempts) {
+  const minutes = Math.round((maxAttempts * POLL_INTERVAL_MS) / 60000);
+  return `${minutes} 分钟`;
+}
+
+function createPollTimeoutError(maxAttempts = INITIAL_POLL_MAX_ATTEMPTS) {
+  const err = new Error(`轮询超时，已等待约 ${formatPollWindow(maxAttempts)}`);
   err.code = POLL_TIMEOUT_CODE;
   return err;
+}
+
+function createPollQueryError(err) {
+  const queryErr = new Error(err?.message || '查询生成进度失败');
+  queryErr.code = POLL_QUERY_ERROR_CODE;
+  return queryErr;
 }
 
 async function uploadOneReferenceImage(file, index, total) {
@@ -1626,26 +1683,45 @@ async function submitOne(imageUrls, prompt) {
   return data.data[0].task_id;
 }
 
-async function pollOne(taskId) {
+async function queryTaskStatus(taskId) {
   const key = apiKey.value.trim();
-  for (let i = 0; i < 60; i++) {
-    if (state.cancelled) throw new Error('已取消');
-    const res = await requestWithChineseError(serviceUrl(`/v1/tasks/${taskId}?language=zh`), {
-      headers: { Authorization: `Bearer ${key}` },
-    }, '查询生成进度失败');
-    const data = await readJsonResponse(res, '查询生成进度失败');
-    if (data.code !== 200 || !data.data) throw new Error('查询失败');
-    const t = data.data;
-    if (t.status === 'completed') {
-      const url = t.result?.images?.[0]?.url?.[0];
-      if (!url) throw new Error('完成但无图片');
-      return { url, time: t.actual_time };
-    }
-    if (t.status === 'failed') throw new Error(friendlyErrorMessage(t.error?.message || '生成失败', '生成失败'));
-    if (t.status === 'cancelled') throw new Error('已取消');
-    await new Promise(r => setTimeout(r, 2500));
+  const res = await requestWithChineseError(serviceUrl(`/v1/tasks/${taskId}?language=zh`), {
+    headers: { Authorization: `Bearer ${key}` },
+  }, '查询生成进度失败');
+  const data = await readJsonResponse(res, '查询生成进度失败');
+  if (data.code !== 200 || !data.data) throw new Error('查询生成进度失败：接口未返回有效任务数据');
+  const t = data.data;
+  const rawStatus = t.status || 'unknown';
+  if (rawStatus === 'completed') {
+    const url = t.result?.images?.[0]?.url?.[0];
+    if (!url) throw new Error('完成但无图片');
+    return { status: 'completed', rawStatus, url, time: t.actual_time };
   }
-  throw createPollTimeoutError();
+  if (rawStatus === 'failed') {
+    return { status: 'failed', rawStatus, error: friendlyErrorMessage(t.error?.message || '生成失败', '生成失败') };
+  }
+  if (rawStatus === 'cancelled') {
+    return { status: 'cancelled', rawStatus, error: '已取消' };
+  }
+  return { status: 'processing', rawStatus };
+}
+
+async function pollOne(taskId, options = {}) {
+  const maxAttempts = options.maxAttempts || INITIAL_POLL_MAX_ATTEMPTS;
+  for (let i = 0; i < maxAttempts; i++) {
+    if (state.cancelled) throw new Error('已取消');
+    let taskState;
+    try {
+      taskState = await queryTaskStatus(taskId);
+    } catch (err) {
+      throw createPollQueryError(err);
+    }
+    if (taskState.status === 'completed') return { url: taskState.url, time: taskState.time, rawStatus: taskState.rawStatus };
+    if (taskState.status === 'failed') throw new Error(taskState.error || '生成失败');
+    if (taskState.status === 'cancelled') throw new Error(taskState.error || '已取消');
+    await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+  }
+  throw createPollTimeoutError(maxAttempts);
 }
 
 // ============ RENDER ============
@@ -1658,6 +1734,124 @@ function renderTaskChips(taskInfos) {
   });
   html += '</div>';
   taskChipsContainer.innerHTML = html;
+}
+
+const TASK_STATUS_LABELS = {
+  submitted: '已提交',
+  polling: '轮询中',
+  processing: '生成中',
+  refreshing: '刷新中',
+  completed: '已完成',
+  failed: '失败',
+  cancelled: '已取消',
+  timeout: '轮询超时',
+  query_error: '查询失败',
+};
+
+function formatTaskSubmittedAt(value) {
+  if (!value) return '-';
+  return new Date(value).toLocaleString([], { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+function getTaskStatusLabel(task) {
+  const base = TASK_STATUS_LABELS[task.status] || task.status || '-';
+  if (task.rawStatus && ['processing','polling','refreshing'].includes(task.status)) {
+    return `${base} (${task.rawStatus})`;
+  }
+  return base;
+}
+
+function upsertTaskRecord(update) {
+  const idx = state.tasks.findIndex(t => t.taskId === update.taskId);
+  if (idx >= 0) {
+    state.tasks[idx] = { ...state.tasks[idx], ...update };
+  } else {
+    state.tasks.push(update);
+  }
+  state.tasks.sort((a, b) => a.index - b.index);
+  renderTaskList();
+}
+
+function updateTaskRecords(updates) {
+  updates.forEach(update => {
+    const idx = state.tasks.findIndex(t => t.taskId === update.taskId);
+    if (idx >= 0) state.tasks[idx] = { ...state.tasks[idx], ...update };
+    else state.tasks.push(update);
+  });
+  state.tasks.sort((a, b) => a.index - b.index);
+  renderTaskList();
+}
+
+function setTaskChipStatus(index, status) {
+  const chip = state.taskChips.find(t => t.index === index);
+  if (!chip) return;
+  chip.done = status === 'completed';
+  chip.fail = ['failed','cancelled'].includes(status);
+  chip.timeout = ['timeout','query_error'].includes(status);
+}
+
+function isContinuableTask(task) {
+  return ['submitted','polling','processing','timeout','query_error'].includes(task.status);
+}
+
+function syncPendingPollsFromTasks() {
+  state.pendingPolls = state.tasks
+    .filter(isContinuableTask)
+    .map(t => ({
+      index: t.index,
+      taskId: t.taskId,
+      prompt: t.prompt,
+      displayLabel: t.displayLabel,
+    }));
+}
+
+function renderTaskList() {
+  if (!state.tasks.length) {
+    taskListContainer.innerHTML = '';
+    return;
+  }
+  const rows = state.tasks.map(task => {
+    const canRefresh = task.taskId && !task.refreshing && !state.cancelled;
+    const preview = task.url
+      ? `<img src="${task.url}" alt="任务 ${task.index + 1} 预览" loading="lazy" />`
+      : '<span>—</span>';
+    const actionText = task.refreshing ? '刷新中…' : '刷新';
+    return `
+      <tr>
+        <td class="task-id" title="${escapeHtml(task.taskId)}">${escapeHtml(task.taskId)}</td>
+        <td class="task-time">${escapeHtml(formatTaskSubmittedAt(task.submittedAt))}</td>
+        <td>
+          <span class="task-status ${escapeHtml(task.status || 'submitted')}" title="${escapeHtml(task.error || '')}">
+            ${escapeHtml(getTaskStatusLabel(task))}
+          </span>
+        </td>
+        <td class="task-preview"><div class="task-preview-box">${preview}</div></td>
+        <td><button class="task-refresh-btn" data-task-id="${escapeHtml(task.taskId)}" ${canRefresh ? '' : 'disabled'}>${actionText}</button></td>
+      </tr>`;
+  }).join('');
+  const done = state.tasks.filter(t => t.status === 'completed').length;
+  const active = state.tasks.filter(t => ['submitted','polling','processing','timeout','query_error','refreshing'].includes(t.status)).length;
+  taskListContainer.innerHTML = `
+    <div class="task-list-panel">
+      <div class="task-list-head">
+        <div class="task-list-title">任务列表</div>
+        <div class="task-list-count">${done}/${state.tasks.length} 完成${active ? ` · ${active} 个可继续查询` : ''}</div>
+      </div>
+      <div class="task-table-wrap">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>任务 ID</th>
+              <th>提交时间</th>
+              <th>任务状态</th>
+              <th>图片预览</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
 function setContinuePollVisible(show) {
@@ -1686,8 +1880,8 @@ function updatePollSummary(totalCount) {
   }
 
   if (pending > 0) {
-    setStatus(`${done}/${totalCount} 完成，${pending} 个超时待继续`, 'warning');
-    logMsg(`⏱ ${pending} 个任务轮询超时，可点击"继续轮询超时任务"再等一轮`, 'warn');
+    setStatus(`${done}/${totalCount} 完成，${pending} 个待继续查询`, 'warning');
+    logMsg(`⏱ ${pending} 个任务仍可继续查询，可点击"继续轮询超时任务"或表格里的"刷新"`, 'warn');
     setContinuePollVisible(true);
   } else if (done > 0) {
     setStatus(`${done}/${totalCount} 完成`, done === totalCount ? 'success' : failed > 0 ? 'warning' : 'success');
@@ -1717,6 +1911,18 @@ function handlePollResults(submitted, pollResults, totalCount) {
         time: pr.value.time,
         prompt: task.prompt, selected: false,
       });
+      upsertTaskRecord({
+        taskId: task.taskId,
+        index: task.index,
+        prompt: task.prompt,
+        displayLabel: task.displayLabel,
+        status: 'completed',
+        rawStatus: pr.value.rawStatus || 'completed',
+        url: pr.value.url,
+        time: pr.value.time,
+        error: '',
+        refreshing: false,
+      });
       if (chip) chip.done = true;
       const statusEl = document.getElementById(`promptStatus_${task.index}`);
       if (statusEl) statusEl.textContent = '✅';
@@ -1727,10 +1933,45 @@ function handlePollResults(submitted, pollResults, totalCount) {
     const statusEl = document.getElementById(`promptStatus_${task.index}`);
     if (reason.code === POLL_TIMEOUT_CODE) {
       timedOut.push(task);
+      upsertTaskRecord({
+        taskId: task.taskId,
+        index: task.index,
+        prompt: task.prompt,
+        displayLabel: task.displayLabel,
+        status: 'timeout',
+        rawStatus: '',
+        error: `轮询超时，可继续轮询再等待约 ${formatPollWindow(CONTINUE_POLL_MAX_ATTEMPTS)}，或手动刷新`,
+        refreshing: false,
+      });
       if (chip) chip.timeout = true;
       if (statusEl) statusEl.textContent = '⏱';
-      logMsg(`#${task.index+1} 轮询超时，任务已保留: ${task.taskId}`, 'warn');
+      logMsg(`#${task.index+1} ${reason.message || '轮询超时'}，任务已保留: ${task.taskId}`, 'warn');
+    } else if (reason.code === POLL_QUERY_ERROR_CODE) {
+      timedOut.push(task);
+      upsertTaskRecord({
+        taskId: task.taskId,
+        index: task.index,
+        prompt: task.prompt,
+        displayLabel: task.displayLabel,
+        status: 'query_error',
+        rawStatus: '',
+        error: reason.message || '查询生成进度失败',
+        refreshing: false,
+      });
+      if (chip) chip.timeout = true;
+      if (statusEl) statusEl.textContent = '⏱';
+      logMsg(`#${task.index+1} 查询失败，任务已保留，可稍后刷新: ${task.taskId}`, 'warn');
     } else {
+      upsertTaskRecord({
+        taskId: task.taskId,
+        index: task.index,
+        prompt: task.prompt,
+        displayLabel: task.displayLabel,
+        status: reason.message === '已取消' ? 'cancelled' : 'failed',
+        rawStatus: '',
+        error: reason.message || '未知错误',
+        refreshing: false,
+      });
       if (chip) chip.fail = true;
       if (statusEl) statusEl.textContent = '❌';
       logMsg(`#${task.index+1} 失败: ${reason.message || '未知错误'}`, 'error');
@@ -1740,6 +1981,86 @@ function handlePollResults(submitted, pollResults, totalCount) {
   state.pendingPolls = timedOut;
   renderTaskChips(state.taskChips);
   updatePollSummary(totalCount);
+}
+
+async function refreshTaskById(taskId) {
+  const key = apiKey.value.trim();
+  if (!key) { logMsg('请先输入接口密钥', 'error'); return; }
+  const task = state.tasks.find(t => t.taskId === taskId);
+  if (!task) { logMsg(`未找到任务: ${taskId}`, 'error'); return; }
+
+  upsertTaskRecord({ taskId, status: 'refreshing', refreshing: true, error: '' });
+  logMsg(`#${task.index + 1} 正在按任务 ID 查询: ${taskId}`);
+
+  try {
+    const taskState = await queryTaskStatus(taskId);
+    if (taskState.status === 'completed') {
+      addResult({
+        index: task.index,
+        url: taskState.url,
+        taskId,
+        time: taskState.time,
+        prompt: task.prompt,
+      });
+      upsertTaskRecord({
+        taskId,
+        status: 'completed',
+        rawStatus: taskState.rawStatus || 'completed',
+        url: taskState.url,
+        time: taskState.time,
+        error: '',
+        refreshing: false,
+      });
+      setTaskChipStatus(task.index, 'completed');
+      const statusEl = document.getElementById(`promptStatus_${task.index}`);
+      if (statusEl) statusEl.textContent = '✅';
+      renderResults();
+      resultArea.classList.add('show');
+      logMsg(`#${task.index + 1} 已完成，图片结果已更新`, 'success');
+    } else if (taskState.status === 'failed' || taskState.status === 'cancelled') {
+      const finalStatus = taskState.status === 'cancelled' ? 'cancelled' : 'failed';
+      upsertTaskRecord({
+        taskId,
+        status: finalStatus,
+        rawStatus: taskState.rawStatus || finalStatus,
+        error: taskState.error || getTaskStatusLabel({ status: finalStatus }),
+        refreshing: false,
+      });
+      setTaskChipStatus(task.index, finalStatus);
+      const statusEl = document.getElementById(`promptStatus_${task.index}`);
+      if (statusEl) statusEl.textContent = finalStatus === 'cancelled' ? '⏹' : '❌';
+      logMsg(`#${task.index + 1} ${finalStatus === 'cancelled' ? '已取消' : '失败'}: ${taskState.error || ''}`, finalStatus === 'cancelled' ? 'warn' : 'error');
+    } else {
+      upsertTaskRecord({
+        taskId,
+        status: 'processing',
+        rawStatus: taskState.rawStatus || 'processing',
+        error: '',
+        refreshing: false,
+      });
+      setTaskChipStatus(task.index, 'processing');
+      const statusEl = document.getElementById(`promptStatus_${task.index}`);
+      if (statusEl) statusEl.textContent = '⏳';
+      logMsg(`#${task.index + 1} 仍在生成中: ${taskState.rawStatus || 'processing'}`, 'info');
+    }
+  } catch (err) {
+    upsertTaskRecord({
+      taskId,
+      status: 'query_error',
+      rawStatus: '',
+      error: err.message || '查询生成进度失败',
+      refreshing: false,
+    });
+    setTaskChipStatus(task.index, 'query_error');
+    const statusEl = document.getElementById(`promptStatus_${task.index}`);
+    if (statusEl) statusEl.textContent = '⏱';
+    logMsg(`#${task.index + 1} 查询失败，任务仍已保留: ${err.message || '未知错误'}`, 'warn');
+  } finally {
+    syncPendingPollsFromTasks();
+    renderTaskChips(state.taskChips);
+    renderTaskList();
+    updatePollSummary(state.submittedCount || state.tasks.length || getActiveImageCount());
+  }
 }
 
 function triggerDirectDownload(url, filename) {
@@ -1753,14 +2074,252 @@ function triggerDirectDownload(url, filename) {
   document.body.removeChild(a);
 }
 
-async function fallbackDirectDownloads(images) {
-  logMsg('改用原始图片链接逐个下载/打开…', 'warn');
+function getImageFileExtension(blob, url = '') {
+  const byType = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+    'image/avif': 'avif',
+  };
+  if (byType[blob?.type]) return byType[blob.type];
+  const cleanUrl = String(url).split('?')[0].split('#')[0];
+  const match = cleanUrl.match(/\.([a-z0-9]{2,5})$/i);
+  return match ? match[1].toLowerCase() : 'png';
+}
+
+function getSuggestedImageFilename(image) {
+  const index = image?.index != null ? image.index + 1 : Date.now();
+  const ext = getImageFileExtension(null, image?.url || '');
+  return `image-${index}.${ext}`;
+}
+
+function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+async function fetchImageBlobViaProxy(image) {
+  let resp;
+  try {
+    resp = await fetch(LOCAL_IMAGE_PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: image.url, index: image.index }),
+    });
+  } catch (err) {
+    throw new Error('本地下载代理未启动');
+  }
+  if (!resp.ok) {
+    let message = '';
+    try {
+      const data = await resp.json();
+      message = data.error || '';
+    } catch (err) {}
+    throw new Error(message || `本地下载代理返回 ${resp.status}`);
+  }
+  return await resp.blob();
+}
+
+async function fetchImageBlobForSave(image) {
+  try {
+    const resp = await requestWithChineseError(image.url, undefined, `读取 #${image.index+1} 图片失败`);
+    if (!resp.ok) throw new Error(`图片服务器返回 ${resp.status}`);
+    return await resp.blob();
+  } catch (directErr) {
+    try {
+      logMsg(`浏览器无法直接读取 #${image.index+1}，尝试本地代理…`, 'warn');
+      return await fetchImageBlobViaProxy(image);
+    } catch (proxyErr) {
+      const message = `${imageReadErrorMessage(`另存为 #${image.index+1} 失败`)}；本地代理也不可用：${proxyErr.message || proxyErr}`;
+      throw new Error(message);
+    }
+  }
+}
+
+async function saveImageAs(image) {
+  const suggestedName = getSuggestedImageFilename(image);
+  let fileHandle = null;
+  if (window.showSaveFilePicker) {
+    try {
+      fileHandle = await window.showSaveFilePicker({
+        suggestedName,
+        types: [{
+          description: '图片文件',
+          accept: {
+            'image/png': ['.png'],
+            'image/jpeg': ['.jpg', '.jpeg'],
+            'image/webp': ['.webp'],
+            'image/gif': ['.gif'],
+            'image/avif': ['.avif'],
+          },
+        }],
+      });
+    } catch (err) {
+      if (err?.name === 'AbortError') {
+        logMsg('已取消另存为', 'warn');
+        return;
+      }
+      logMsg(`系统另存为窗口不可用，改用普通下载：${err.message || err}`, 'warn');
+    }
+  }
+
+  try {
+    const blob = await fetchImageBlobForSave(image);
+    const ext = getImageFileExtension(blob, image.url);
+    const filename = suggestedName.replace(/\.[a-z0-9]{2,5}$/i, `.${ext}`);
+    if (fileHandle) {
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+    } else {
+      saveBlob(blob, filename);
+    }
+    logMsg(`#${image.index+1} 已另存为`, 'success');
+  } catch (err) {
+    logMsg(`⚠️ ${err.message || friendlyErrorMessage(err, '另存为失败')}`, 'warn');
+    logMsg(`#${image.index+1} 已改为打开原图，请在新标签中右键另存为`, 'warn');
+    triggerDirectDownload(image.url, suggestedName);
+  }
+}
+
+function openImagesFallbackTab(images, reason = '') {
+  const cards = images.map((r, i) => {
+    const label = `#${r.index + 1 || i + 1}`;
+    const url = String(r.url || '');
+    return `
+      <article class="card">
+        <div class="card-head">
+          <strong>${escapeHtml(label)}</strong>
+          <a href="${escapeHtml(url)}" target="_blank" rel="noopener">打开原图</a>
+        </div>
+        <img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" loading="lazy" />
+        <textarea readonly>${escapeHtml(url)}</textarea>
+      </article>`;
+  }).join('');
+  const html = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片下载兜底</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #11131a; color: #eef1f8; }
+  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 0 auto 16px; max-width: 1180px; }
+  h1 { margin: 0 0 6px; font-size: 22px; }
+  p { margin: 0; color: #a8afc2; line-height: 1.5; }
+  button, a.button { border: 0; border-radius: 8px; padding: 10px 14px; background: #22c55e; color: white; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; max-width: 1180px; margin: 0 auto; }
+  .card { background: #1b1f2b; border: 1px solid #30384b; border-radius: 10px; overflow: hidden; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; border-bottom: 1px solid #30384b; }
+  .card-head a { color: #8ab4ff; font-size: 13px; }
+  img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #090b10; }
+  textarea { display: block; width: 100%; min-height: 68px; resize: vertical; border: 0; border-top: 1px solid #30384b; padding: 8px; background: #121620; color: #a8afc2; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  @media (max-width: 640px) { header { flex-direction: column; } button, a.button { width: 100%; text-align: center; } }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>图片下载兜底</h1>
+      <p>压缩包打包失败时，可在这里加载原图，逐张右键保存或点击“打开原图”。${reason ? `<br>失败原因：${escapeHtml(reason)}` : ''}</p>
+    </div>
+    <button id="openAllBtn">逐张打开原图</button>
+  </header>
+  <main class="grid">${cards}</main>
+  <script>
+    const urls = ${JSON.stringify(images.map(r => r.url))};
+    document.getElementById('openAllBtn').addEventListener('click', () => {
+      urls.forEach((url, i) => setTimeout(() => window.open(url, '_blank', 'noopener'), i * 180));
+    });
+  <\/script>
+</body>
+</html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank', 'noopener');
+  setTimeout(() => URL.revokeObjectURL(url), 10 * 60 * 1000);
+  return !!win;
+}
+
+async function loadJSZip() {
+  if (typeof JSZip !== 'undefined') return;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('JSZip 加载失败，请检查网络后重试'));
+    document.head.appendChild(script);
+  });
+}
+
+async function fetchImageBlobForZip(image) {
+  let resp;
+  try {
+    resp = await requestWithChineseError(image.url, undefined, `读取 #${image.index+1} 图片失败`);
+  } catch (err) {
+    throw new Error(imageReadErrorMessage(`打包 #${image.index+1} 失败`));
+  }
+  if (!resp.ok) throw new Error(`打包 #${image.index+1} 失败：图片服务器返回 ${resp.status}`);
+  try {
+    return await resp.blob();
+  } catch (err) {
+    throw new Error(imageReadErrorMessage(`打包 #${image.index+1} 失败`));
+  }
+}
+
+async function downloadImagesAsZip(images) {
+  await loadJSZip();
+  const zip = new JSZip();
+  const folder = zip.folder('images-output');
   for (let i = 0; i < images.length; i++) {
     const r = images[i];
-    triggerDirectDownload(r.url, `image-${r.index+1}.png`);
-    logMsg(`  ↗ 已触发 #${r.index+1} 原图链接`, 'info');
-    await new Promise(resolve => setTimeout(resolve, 250));
+    logMsg(`  📥 下载并打包 #${r.index+1}…`);
+    const blob = await fetchImageBlobForZip(r);
+    const ext = getImageFileExtension(blob, r.url);
+    folder.file(`image-${r.index+1}.${ext}`, blob);
+    logMsg(`  ✅ 已加入压缩包 #${r.index+1}`, 'success');
   }
+  logMsg('生成压缩包…');
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  saveBlob(zipBlob, `images-${new Date().toISOString().slice(0,10)}.zip`);
+  return zipBlob;
+}
+
+async function downloadImagesAsZipViaProxy(images) {
+  let resp;
+  try {
+    resp = await fetch(LOCAL_ZIP_PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        images: images.map(r => ({ url: r.url, index: r.index })),
+      }),
+    });
+  } catch (err) {
+    throw new Error('本地下载代理未启动。Windows 请双击 start-download-proxy.bat，macOS 请双击 start-download-proxy.command；也可以在当前目录运行：node download-proxy-server.mjs，然后再点【全部下载】');
+  }
+
+  if (!resp.ok) {
+    let message = '';
+    try {
+      const data = await resp.json();
+      message = data.error || '';
+    } catch (err) {}
+    throw new Error(message ? `本地下载代理打包失败：${message}` : `本地下载代理打包失败：${resp.status}`);
+  }
+
+  const zipBlob = await resp.blob();
+  saveBlob(zipBlob, `images-${new Date().toISOString().slice(0,10)}.zip`);
+  return zipBlob;
 }
 
 function renderResults() {
@@ -1780,6 +2339,7 @@ function renderResults() {
       </div>
       <div class="actions">
         <button data-action="download" data-idx="${i}">⬇ 下载</button>
+        <button data-action="save-as" data-idx="${i}">另存为</button>
 	        <button data-action="copy" data-idx="${i}">🔗 链接</button>
       </div>`;
     div.querySelector('.img-wrap').addEventListener('click', e => {
@@ -1792,6 +2352,7 @@ function renderResults() {
       e.target.classList.toggle('checked', r.selected);
     });
     div.querySelector('[data-action="download"]').addEventListener('click', async () => { await downloadUrl(r.url, `image-${r.index+1}.png`); });
+    div.querySelector('[data-action="save-as"]').addEventListener('click', async () => { await saveImageAs(r); });
     div.querySelector('[data-action="copy"]').addEventListener('click', () => {
 	      navigator.clipboard.writeText(r.url).then(() => logMsg(`#${r.index+1} 链接已复制`, 'success')).catch(() => {});
     });
@@ -1847,6 +2408,7 @@ async function generate() {
   state.results = [];
   state.pendingPolls = [];
   state.taskChips = [];
+  state.tasks = [];
   state.submittedCount = 0;
   state.cancelled = false;
   state.running = true;
@@ -1856,6 +2418,8 @@ async function generate() {
   generateBtn.textContent = '⏳ 生成中…';
   cancelBtn.style.display = 'inline-flex';
   log.innerHTML = '';
+  taskChipsContainer.innerHTML = '';
+  taskListContainer.innerHTML = '';
   logMsg(`开始批量生成 ${count} 张图片…`);
 
   // Mark empty manual prompts only when there is no shared context.
@@ -1912,17 +2476,31 @@ async function generate() {
     const submitted = await Promise.all(submitPromises);
     state.submittedCount = submitted.length;
     logMsg(`✅ ${submitted.length} 个任务已提交`, 'success');
+    updateTaskRecords(submitted.map(s => ({
+      index: s.index,
+      taskId: s.taskId,
+      prompt: s.prompt,
+      displayLabel: s.displayLabel,
+      submittedAt: new Date().toISOString(),
+      status: 'submitted',
+      rawStatus: '',
+      url: '',
+      time: null,
+      error: '',
+      refreshing: false,
+    })));
 
     // Task chips
 	    state.taskChips = submitted.map(s => ({ index: s.index, done: false, fail: false, timeout: false, promptSnippet: s.displayLabel }));
     renderTaskChips(state.taskChips);
 
     // Step 3: Poll all
-    logMsg('轮询所有任务…');
+    logMsg(`轮询所有任务，最长约 ${formatPollWindow(INITIAL_POLL_MAX_ATTEMPTS)}…`);
     setStatus(`生成中 0/${toSubmit.length}`, 'loading');
+    updateTaskRecords(submitted.map(s => ({ taskId: s.taskId, status: 'polling' })));
 
     const pollResults = await Promise.allSettled(
-      submitted.map(s => pollOne(s.taskId).then(r => ({ index: s.index, ...r, prompt: s.prompt })))
+      submitted.map(s => pollOne(s.taskId, { maxAttempts: INITIAL_POLL_MAX_ATTEMPTS }).then(r => ({ index: s.index, ...r, prompt: s.prompt })))
     );
 
     handlePollResults(submitted, pollResults, count);
@@ -1942,6 +2520,13 @@ async function generate() {
 // ============ EVENT BINDINGS ============
 generateBtn.addEventListener('click', generate);
 
+taskListContainer.addEventListener('click', e => {
+  const btn = e.target.closest('.task-refresh-btn');
+  if (!btn) return;
+  const taskId = btn.dataset.taskId;
+  if (taskId) refreshTaskById(taskId);
+});
+
 continuePollBtn.addEventListener('click', async () => {
   const key = apiKey.value.trim();
   if (!key) { logMsg('请先输入接口密钥', 'error'); return; }
@@ -1959,11 +2544,12 @@ continuePollBtn.addEventListener('click', async () => {
   cancelBtn.style.display = 'inline-flex';
   showProgress(true);
   setStatus(`继续轮询 ${pending.length} 个任务…`, 'loading');
-  logMsg(`继续轮询 ${pending.length} 个超时任务…`);
+  logMsg(`继续轮询 ${pending.length} 个超时任务，本次最长约 ${formatPollWindow(CONTINUE_POLL_MAX_ATTEMPTS)}…`);
+  updateTaskRecords(pending.map(s => ({ taskId: s.taskId, status: 'polling', refreshing: false, error: '' })));
 
   try {
     const pollResults = await Promise.allSettled(
-      pending.map(s => pollOne(s.taskId).then(r => ({ index: s.index, ...r, prompt: s.prompt })))
+      pending.map(s => pollOne(s.taskId, { maxAttempts: CONTINUE_POLL_MAX_ATTEMPTS }).then(r => ({ index: s.index, ...r, prompt: s.prompt })))
     );
     handlePollResults(pending, pollResults, totalCount);
   } catch (err) {
@@ -2001,6 +2587,7 @@ clearBtn.addEventListener('click', () => {
   state.results = [];
   state.pendingPolls = [];
   state.taskChips = [];
+  state.tasks = [];
   state.submittedCount = 0;
   state.previewIndex = 0;
   state.promptMeta = [];
@@ -2014,6 +2601,7 @@ clearBtn.addEventListener('click', () => {
   showProgress(false);
   setContinuePollVisible(false);
   taskChipsContainer.innerHTML = '';
+  taskListContainer.innerHTML = '';
 });
 
 downloadAllBtn.addEventListener('click', async () => {
@@ -2021,57 +2609,29 @@ downloadAllBtn.addEventListener('click', async () => {
   if (images.length === 0) { logMsg('没有可下载的图片', 'warn'); return; }
   downloadAllBtn.disabled = true;
   downloadAllBtn.textContent = '⏳ 打包中…';
-  logMsg(`正在打包 ${images.length} 张图片为压缩包…`, 'info');
+  logMsg(`正在下载并打包 ${images.length} 张图片为压缩包…`, 'info');
   try {
-    // Use jszip via CDN (load on demand)
-    if (typeof JSZip === 'undefined') {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        script.onload = resolve;
-        script.onerror = () => reject(new Error('JSZip 加载失败'));
-        document.head.appendChild(script);
-      });
+    let zipBlob;
+    try {
+      zipBlob = await downloadImagesAsZip(images);
+    } catch (browserErr) {
+      logMsg(`⚠️ 浏览器直接打包失败：${browserErr.message || friendlyErrorMessage(browserErr, '打包下载失败')}`, 'warn');
+      logMsg('正在改用本地下载代理打包，不会打开原始图片标签…', 'info');
+      zipBlob = await downloadImagesAsZipViaProxy(images);
     }
-    const zip = new JSZip();
-    const folder = zip.folder('images-output');
-    for (let i = 0; i < images.length; i++) {
-	      const r = images[i];
-	      logMsg(`  📥 打包 #${r.index+1}…`);
-	      let resp;
-	      try {
-	        resp = await requestWithChineseError(r.url, undefined, `读取 #${r.index+1} 图片失败`);
-	      } catch (err) {
-	        throw new Error(imageReadErrorMessage(`打包 #${r.index+1} 失败`));
-	      }
-	      if (!resp.ok) throw new Error(`打包 #${r.index+1} 失败：图片服务器返回 ${resp.status}`);
-      let blob;
-      try {
-        blob = await resp.blob();
-      } catch (err) {
-        throw new Error(imageReadErrorMessage(`打包 #${r.index+1} 失败`));
-      }
-      const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
-      folder.file(`image-${r.index+1}.${ext}`, blob);
-      // Update progress
-      log.innerHTML = log.innerHTML.replace(/\n\[.*?\] 📥 打包 #.*/, '');
-      logMsg(`  ✅ 已打包 #${r.index+1}`, 'success');
-    }
-    logMsg('生成压缩包…');
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const url = URL.createObjectURL(zipBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `images-${new Date().toISOString().slice(0,10)}.zip`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
     logMsg(`✅ 已下载压缩包 (${(zipBlob.size / 1024 / 1024).toFixed(1)} MB)`, 'success');
-	  } catch (err) {
-	    logMsg(`⚠️ ${err.message || friendlyErrorMessage(err, '打包下载失败')}`, 'warn');
-	    await fallbackDirectDownloads(images);
-	  } finally {
+  } catch (err) {
+    logMsg(`⚠️ ${err.message || friendlyErrorMessage(err, '打包下载失败')}`, 'warn');
+    logMsg('压缩包打包失败，正在打开图片汇总新标签作为兜底…', 'warn');
+    const opened = openImagesFallbackTab(images, err.message || friendlyErrorMessage(err, '打包下载失败'));
+    if (opened) {
+      logMsg('已打开图片汇总新标签，可逐张右键保存或点击“打开原图”。', 'info');
+    } else {
+      const urls = images.map(r => r.url).join('\n');
+      navigator.clipboard?.writeText(urls).catch(() => {});
+      logMsg('浏览器拦截了新标签，已尝试复制全部图片链接。请允许弹窗后重试，或使用复制的链接手动打开。', 'warn');
+    }
+  } finally {
     downloadAllBtn.disabled = false;
     downloadAllBtn.textContent = '⬇ 全部下载';
   }
