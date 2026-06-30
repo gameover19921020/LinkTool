@@ -266,7 +266,36 @@
   .modal-prev { left:20px; }
   .modal-next { right:20px; }
   .modal-counter { position:absolute; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(0,0,0,.58); color:white; border:1px solid rgba(255,255,255,.14); border-radius:99px; padding:6px 12px; font-size:13px; }
-	  @media (max-width:640px) { .form-row-2,.form-row-3{grid-template-columns:1fr} .api-key-row{flex-direction:column} .api-key-row .btn{width:100%} .prompt-input-row{grid-template-columns:1fr} .prompt-template-btn{min-height:42px; flex-direction:row} .template-picker{padding:16px; max-height:90vh} .template-picker-title{font-size:20px} .template-grid{grid-template-columns:1fr} .image-type-grid{grid-template-columns:1fr} .result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .batch-actions{flex-direction:column} .task-list-head{align-items:flex-start; flex-direction:column} .task-table{min-width:700px} }
+  .summary-overlay { display:none; position:fixed; inset:0; z-index:1300; align-items:center; justify-content:center; padding:18px; background:rgba(5,5,11,.78); backdrop-filter:blur(10px); }
+  .summary-overlay.show { display:flex; }
+  .summary-dialog { width:min(620px,100%); max-height:88vh; overflow:auto; background:#181820; border:1px solid var(--border); border-radius:14px; box-shadow:0 24px 80px rgba(0,0,0,.5); color:var(--text); }
+  .summary-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:18px 18px 12px; border-bottom:1px solid rgba(255,255,255,.07); }
+  .summary-title { font-size:19px; line-height:1.25; font-weight:800; }
+  .summary-subtitle { margin-top:5px; color:var(--text-muted); font-size:13px; line-height:1.45; }
+  .summary-close { width:34px; height:34px; flex-shrink:0; border:none; border-radius:99px; background:#2a2a3a; color:var(--text); cursor:pointer; font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; }
+  .summary-close:hover { background:#3a3a50; }
+  .summary-body { padding:16px 18px 4px; }
+  .summary-counts { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .summary-count { border:1px solid var(--border); border-radius:9px; background:#101018; padding:12px; }
+  .summary-count strong { display:block; font-size:25px; line-height:1; margin-bottom:6px; }
+  .summary-count span { color:var(--text-muted); font-size:12px; }
+  .summary-count.success strong { color:var(--success); }
+  .summary-count.fail strong { color:var(--error); }
+  .summary-count.pending strong { color:var(--warning); }
+  .summary-section { margin-bottom:14px; }
+  .summary-section-title { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; font-weight:800; margin-bottom:8px; }
+  .summary-list { display:flex; flex-direction:column; gap:6px; }
+  .summary-row { display:grid; grid-template-columns:86px minmax(0,1fr); gap:10px; padding:9px 10px; border:1px solid rgba(255,255,255,.07); border-radius:8px; background:#101018; font-size:12px; line-height:1.45; }
+  .summary-row-label { font-weight:800; white-space:nowrap; }
+  .summary-row.success .summary-row-label { color:var(--success); }
+  .summary-row.fail .summary-row-label { color:var(--error); }
+  .summary-row.pending .summary-row-label { color:var(--warning); }
+  .summary-row-main { min-width:0; color:var(--text); overflow:hidden; text-overflow:ellipsis; }
+  .summary-row-note { margin-top:2px; color:var(--text-muted); word-break:break-word; }
+  .summary-empty { color:var(--text-muted); font-size:12px; padding:10px; border:1px dashed rgba(255,255,255,.12); border-radius:8px; background:#101018; }
+  .summary-actions { display:flex; justify-content:flex-end; gap:8px; padding:14px 18px 18px; border-top:1px solid rgba(255,255,255,.07); flex-wrap:wrap; }
+  .summary-actions .btn:disabled { opacity:.45; cursor:not-allowed; }
+	  @media (max-width:640px) { .form-row-2,.form-row-3{grid-template-columns:1fr} .api-key-row{flex-direction:column} .api-key-row .btn{width:100%} .prompt-input-row{grid-template-columns:1fr} .prompt-template-btn{min-height:42px; flex-direction:row} .template-picker{padding:16px; max-height:90vh} .template-picker-title{font-size:20px} .template-grid{grid-template-columns:1fr} .image-type-grid{grid-template-columns:1fr} .result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .batch-actions{flex-direction:column} .task-list-head{align-items:flex-start; flex-direction:column} .task-table{min-width:700px} .summary-counts{grid-template-columns:1fr} .summary-row{grid-template-columns:1fr; gap:4px} .summary-actions{justify-content:stretch} .summary-actions .btn{width:100%; justify-content:center} }
 </style>
 </head>
 <body>
@@ -282,6 +311,24 @@
   </div>
   <button class="modal-nav modal-next" id="modalNext" aria-label="下一张">›</button>
   <div class="modal-counter" id="modalCounter">1 / 1</div>
+</div>
+
+<div class="summary-overlay" id="resultSummaryOverlay">
+  <div class="summary-dialog" role="dialog" aria-modal="true" aria-labelledby="resultSummaryTitle">
+    <div class="summary-head">
+      <div>
+        <div class="summary-title" id="resultSummaryTitle">生成结果</div>
+        <div class="summary-subtitle" id="resultSummarySubtitle"></div>
+      </div>
+      <button class="summary-close" id="resultSummaryClose" aria-label="关闭生成结果">×</button>
+    </div>
+    <div class="summary-body" id="resultSummaryBody"></div>
+    <div class="summary-actions">
+      <button class="btn btn-outline btn-sm" id="copySummaryBtn">复制失败详情</button>
+      <button class="btn btn-success btn-sm" id="downloadSummaryBtn">下载成功图片</button>
+      <button class="btn btn-primary btn-sm" id="closeSummaryBtn">知道了</button>
+    </div>
+  </div>
 </div>
 
 <div class="template-overlay" id="templateOverlay">
@@ -535,12 +582,12 @@
     </div>
   </div>
 
-  <footer>批量图片生成工具 <span class="footer-version" id="footerVersion">v20260630-01</span></footer>
+	  <footer>批量图片生成工具 <span class="footer-version" id="footerVersion">v20260630-02</span></footer>
 </div>
 
 <script src="layout-presets.js"></script>
 <script>
-const APP_VERSION = 'v20260630-01';
+	const APP_VERSION = 'v20260630-02';
 document.title = `批量图片生成工具 ${APP_VERSION}`;
 document.getElementById('appVersionBadge').textContent = `版本 ${APP_VERSION}`;
 document.getElementById('footerVersion').textContent = APP_VERSION;
@@ -563,6 +610,7 @@ const state = {
   taskChips: [],
   tasks: [],
   submittedCount: 0,
+  lastGenerationSummary: null,
   running: false,
   cancelled: false,
   activePromptTarget: null,
@@ -817,6 +865,14 @@ const modalPrev = $('modalPrev');
 const modalNext = $('modalNext');
 const modalCounter = $('modalCounter');
 const modalSaveAs = $('modalSaveAs');
+const resultSummaryOverlay = $('resultSummaryOverlay');
+const resultSummaryTitle = $('resultSummaryTitle');
+const resultSummarySubtitle = $('resultSummarySubtitle');
+const resultSummaryBody = $('resultSummaryBody');
+const resultSummaryClose = $('resultSummaryClose');
+const copySummaryBtn = $('copySummaryBtn');
+const downloadSummaryBtn = $('downloadSummaryBtn');
+const closeSummaryBtn = $('closeSummaryBtn');
 const templateOverlay = $('templateOverlay');
 const templateGrid = $('templateGrid');
 const templateClose = $('templateClose');
@@ -824,11 +880,12 @@ const layoutModalOverlay = $('layoutModalOverlay');
 const layoutModalTitle = $('layoutModalTitle');
 const layoutModalClose = $('layoutModalClose');
 const layoutTabs = $('layoutTabs');
-const layoutOptionsGrid = $('layoutOptionsGrid');
-const layoutPagination = $('layoutPagination');
-const layoutUploadInput = $('layoutUploadInput');
-const LOCAL_ZIP_PROXY_URL = 'http://127.0.0.1:8787/zip';
-const LOCAL_IMAGE_PROXY_URL = 'http://127.0.0.1:8787/image';
+	const layoutOptionsGrid = $('layoutOptionsGrid');
+	const layoutPagination = $('layoutPagination');
+	const layoutUploadInput = $('layoutUploadInput');
+	const API_KEY_STORAGE_KEY = 'batch-image-generator-api-key';
+	const LOCAL_ZIP_PROXY_URL = 'http://127.0.0.1:8787/zip';
+	const LOCAL_IMAGE_PROXY_URL = 'http://127.0.0.1:8787/image';
 
 // ============ HELPERS ============
 function logMsg(msg, type = 'info') {
@@ -841,10 +898,37 @@ function setStatus(text, type = '') {
   const colors = { success: 'var(--success)', error: 'var(--error)', loading: 'var(--primary)', warning: 'var(--warning)' };
   statusBadge.style.background = colors[type] || 'var(--text-muted)';
 }
-function showProgress(show) { progressBar.classList.toggle('show', show); }
-function updateResolutionNote() {
-  const allowed = ['16:9','9:16','2:1','1:2','21:9','9:21'];
-  resolutionNote.style.display = (resolution.value === '4k' && !allowed.includes(size.value)) ? 'block' : 'none';
+	function showProgress(show) { progressBar.classList.toggle('show', show); }
+	function getSavedApiKey() {
+	  try {
+	    return localStorage.getItem(API_KEY_STORAGE_KEY) || '';
+	  } catch (err) {
+	    return '';
+	  }
+	}
+	function saveApiKey(value) {
+	  try {
+	    const key = value.trim();
+	    if (key) {
+	      localStorage.setItem(API_KEY_STORAGE_KEY, key);
+	    } else {
+	      localStorage.removeItem(API_KEY_STORAGE_KEY);
+	    }
+	  } catch (err) {
+	    logMsg('浏览器阻止了本地保存密钥，请检查隐私模式或存储权限', 'warn');
+	  }
+	}
+	function initSavedApiKey() {
+	  const savedKey = getSavedApiKey();
+	  if (savedKey && !apiKey.value.trim()) {
+	    apiKey.value = savedKey;
+	  }
+	  apiKey.addEventListener('input', () => saveApiKey(apiKey.value));
+	  apiKey.addEventListener('change', () => saveApiKey(apiKey.value));
+	}
+	function updateResolutionNote() {
+	  const allowed = ['16:9','9:16','2:1','1:2','21:9','9:21'];
+	  resolutionNote.style.display = (resolution.value === '4k' && !allowed.includes(size.value)) ? 'block' : 'none';
 }
 function friendlyErrorMessage(err, fallback = '操作失败') {
   const msg = String(err?.message || err || '').trim();
@@ -1518,6 +1602,131 @@ function closeModalPreview() {
   modalOverlay.classList.remove('show');
 }
 
+function getSummaryItemLabel(item) {
+  const indexText = item?.index != null ? `#${item.index + 1}` : '任务';
+  const label = item?.displayLabel || '';
+  return label ? `${indexText} ${label}` : indexText;
+}
+
+function getGenerationSummary(totalCount = 0, fallbackError = '') {
+  const successItems = state.results
+    .filter(r => r.url)
+    .map(r => ({
+      index: r.index,
+      displayLabel: r.displayLabel || '',
+      note: r.time != null ? `耗时 ${r.time}s` : '已生成图片',
+      count: 1,
+    }));
+
+  const failedStatuses = ['failed', 'cancelled'];
+  const pendingStatuses = ['submitted', 'polling', 'processing', 'timeout', 'query_error', 'refreshing'];
+  const failedItems = [];
+  const pendingItems = [];
+
+  state.tasks.forEach(task => {
+    if (task.status === 'completed') return;
+    const item = {
+      index: task.index,
+      displayLabel: task.displayLabel || '',
+      note: task.error || getTaskStatusLabel(task),
+      statusLabel: getTaskStatusLabel(task),
+      count: 1,
+    };
+    if (failedStatuses.includes(task.status)) {
+      failedItems.push(item);
+    } else if (pendingStatuses.includes(task.status)) {
+      pendingItems.push(item);
+    }
+  });
+
+  const fallbackFailCount = Math.max(1, (totalCount || 0) - successItems.length - pendingItems.length);
+  if (fallbackError && failedItems.length === 0) {
+    failedItems.push({
+      index: null,
+      displayLabel: fallbackFailCount > 1 ? `${fallbackFailCount} 个任务` : '任务',
+      note: fallbackError,
+      statusLabel: '失败',
+      count: fallbackFailCount,
+    });
+  }
+
+  const failedCount = failedItems.reduce((sum, item) => sum + (item.count || 1), 0);
+  const pendingCount = pendingItems.reduce((sum, item) => sum + (item.count || 1), 0);
+  const successCount = successItems.length;
+  const total = Math.max(totalCount || 0, state.submittedCount || 0, state.tasks.length, successCount + failedCount + pendingCount);
+
+  return { total, successCount, failedCount, pendingCount, successItems, failedItems, pendingItems };
+}
+
+function renderSummaryRows(items, tone, emptyText) {
+  if (!items.length) return `<div class="summary-empty">${escapeHtml(emptyText)}</div>`;
+  return `<div class="summary-list">${items.map(item => `
+    <div class="summary-row ${tone}">
+      <div class="summary-row-label">${escapeHtml(item.statusLabel || (tone === 'success' ? '成功' : tone === 'pending' ? '待查询' : '失败'))}</div>
+      <div class="summary-row-main">
+        ${escapeHtml(getSummaryItemLabel(item))}
+        ${item.note ? `<div class="summary-row-note">${escapeHtml(item.note)}</div>` : ''}
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function showGenerationSummary(totalCount = 0, fallbackError = '') {
+  const summary = getGenerationSummary(totalCount, fallbackError);
+  state.lastGenerationSummary = summary;
+
+  const hasPending = summary.pendingCount > 0;
+  const hasFailed = summary.failedCount > 0;
+  resultSummaryTitle.textContent = hasPending
+    ? '生成已结束，仍有任务可继续查询'
+    : hasFailed ? '生成结果有失败项' : '生成完成';
+  resultSummarySubtitle.textContent = `共 ${summary.total} 个任务，成功 ${summary.successCount} 个，失败 ${summary.failedCount} 个${hasPending ? `，可继续查询 ${summary.pendingCount} 个` : ''}`;
+
+  resultSummaryBody.innerHTML = `
+    <div class="summary-counts">
+      <div class="summary-count success"><strong>${summary.successCount}</strong><span>成功</span></div>
+      <div class="summary-count fail"><strong>${summary.failedCount}</strong><span>失败</span></div>
+      <div class="summary-count pending"><strong>${summary.pendingCount}</strong><span>可继续查询</span></div>
+    </div>
+    <div class="summary-section">
+      <div class="summary-section-title"><span>成功图片</span><span>${summary.successCount}</span></div>
+      ${renderSummaryRows(summary.successItems, 'success', '暂无成功图片')}
+    </div>
+    <div class="summary-section">
+      <div class="summary-section-title"><span>失败结果</span><span>${summary.failedCount}</span></div>
+      ${renderSummaryRows(summary.failedItems, 'fail', '暂无失败项')}
+    </div>
+    <div class="summary-section">
+      <div class="summary-section-title"><span>可继续查询</span><span>${summary.pendingCount}</span></div>
+      ${renderSummaryRows(summary.pendingItems, 'pending', '暂无待查询任务')}
+    </div>
+  `;
+
+  copySummaryBtn.disabled = summary.failedCount === 0 && summary.pendingCount === 0;
+  downloadSummaryBtn.disabled = summary.successCount === 0;
+  resultSummaryOverlay.classList.add('show');
+}
+
+function closeGenerationSummary() {
+  resultSummaryOverlay.classList.remove('show');
+}
+
+function buildSummaryCopyText(summary) {
+  if (!summary) return '';
+  const lines = [
+    `生成结果：共 ${summary.total} 个任务，成功 ${summary.successCount} 个，失败 ${summary.failedCount} 个，可继续查询 ${summary.pendingCount} 个`,
+  ];
+  if (summary.failedItems.length) {
+    lines.push('', '失败结果：');
+    summary.failedItems.forEach(item => lines.push(`- ${getSummaryItemLabel(item)}：${item.note || item.statusLabel || '失败'}`));
+  }
+  if (summary.pendingItems.length) {
+    lines.push('', '可继续查询：');
+    summary.pendingItems.forEach(item => lines.push(`- ${getSummaryItemLabel(item)}：${item.note || item.statusLabel || '待查询'}`));
+  }
+  return lines.join('\n');
+}
+
 function moveModal(step) {
   const total = state.results.length;
   if (total <= 1 || !modalOverlay.classList.contains('show')) return;
@@ -1534,6 +1743,19 @@ modalSaveAs.addEventListener('click', async e => {
   if (item?.url) await saveImageAs(item);
 });
 modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) modalOverlay.classList.remove('show'); });
+resultSummaryClose.addEventListener('click', closeGenerationSummary);
+closeSummaryBtn.addEventListener('click', closeGenerationSummary);
+resultSummaryOverlay.addEventListener('click', e => { if (e.target === resultSummaryOverlay) closeGenerationSummary(); });
+copySummaryBtn.addEventListener('click', () => {
+  const text = buildSummaryCopyText(state.lastGenerationSummary);
+  if (!text) return;
+  navigator.clipboard.writeText(text)
+    .then(() => logMsg('失败详情已复制', 'success'))
+    .catch(() => logMsg('复制失败详情失败，请手动查看弹窗内容', 'warn'));
+});
+downloadSummaryBtn.addEventListener('click', () => {
+  if (state.results.some(r => r.url)) downloadAllBtn.click();
+});
 document.addEventListener('keydown', e => {
   if (modalOverlay.classList.contains('show')) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); moveModal(-1); return; }
@@ -1541,6 +1763,7 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape') {
     closeModalPreview();
+    closeGenerationSummary();
     closeTemplatePicker();
     closeLayoutPicker();
     closeCustomSelects();
@@ -2083,7 +2306,7 @@ function renderTaskList() {
     return;
   }
   const rows = state.tasks.map(task => {
-    const canRefresh = task.taskId && !task.refreshing && !state.cancelled;
+    const canRefresh = task.taskId && !String(task.taskId).startsWith('submit-failed-') && !task.refreshing && !state.cancelled;
     const preview = task.url
       ? `<img src="${task.url}" alt="任务 ${task.index + 1} 预览" loading="lazy" />`
       : '<span>—</span>';
@@ -2141,7 +2364,8 @@ function addResult(result) {
   state.results.sort((a, b) => a.index - b.index);
 }
 
-function updatePollSummary(totalCount) {
+function updatePollSummary(totalCount, options = {}) {
+  const shouldShowDialog = options.showDialog !== false;
   const done = state.results.length;
   const pending = state.pendingPolls.length;
   const failed = Math.max(0, state.submittedCount - done - pending);
@@ -2159,9 +2383,11 @@ function updatePollSummary(totalCount) {
     setStatus(`${done}/${totalCount} 完成`, done === totalCount ? 'success' : failed > 0 ? 'warning' : 'success');
     logMsg(`🎉 完成! 成功 ${done} 张${failed > 0 ? `，失败 ${failed} 张` : ''}`, 'success');
     setContinuePollVisible(false);
+    if (shouldShowDialog) showGenerationSummary(totalCount);
   } else {
     setStatus('全部失败 ❌', 'error');
     setContinuePollVisible(false);
+    if (shouldShowDialog) showGenerationSummary(totalCount);
   }
 }
 
@@ -2181,7 +2407,7 @@ function handlePollResults(submitted, pollResults, totalCount) {
       addResult({
         index: task.index, url: pr.value.url, taskId: task.taskId,
         time: pr.value.time,
-        prompt: task.prompt, selected: false,
+        prompt: task.prompt, displayLabel: task.displayLabel, selected: false,
       });
       upsertTaskRecord({
         taskId: task.taskId,
@@ -2273,6 +2499,7 @@ async function refreshTaskById(taskId) {
         taskId,
         time: taskState.time,
         prompt: task.prompt,
+        displayLabel: task.displayLabel,
       });
       upsertTaskRecord({
         taskId,
@@ -2682,9 +2909,11 @@ async function generate() {
   state.taskChips = [];
   state.tasks = [];
   state.submittedCount = 0;
+  state.lastGenerationSummary = null;
   state.cancelled = false;
   state.running = true;
   resultArea.classList.remove('show');
+  closeGenerationSummary();
   setContinuePollVisible(false);
   generateBtn.disabled = true;
   generateBtn.textContent = '⏳ 生成中…';
@@ -2745,26 +2974,68 @@ async function generate() {
 	      if (taskImageUrls.length > 16) throw new Error(`${s.displayLabel} 的参考图超过 16 张，请减少上传参考图或取消该类型的排版参考`);
 	      return submitOne(taskImageUrls, s.prompt).then(taskId => ({ index: s.index, taskId, prompt: s.prompt, displayLabel: s.displayLabel }));
 	    });
-    const submitted = await Promise.all(submitPromises);
-    state.submittedCount = submitted.length;
-    logMsg(`✅ ${submitted.length} 个任务已提交`, 'success');
-    updateTaskRecords(submitted.map(s => ({
-      index: s.index,
-      taskId: s.taskId,
-      prompt: s.prompt,
-      displayLabel: s.displayLabel,
-      submittedAt: new Date().toISOString(),
-      status: 'submitted',
-      rawStatus: '',
-      url: '',
-      time: null,
-      error: '',
-      refreshing: false,
-    })));
+    const submitResults = await Promise.allSettled(submitPromises);
+    const submitted = [];
+    const submitFailures = [];
+    const submittedAt = new Date().toISOString();
+
+    submitResults.forEach((result, i) => {
+      const source = toSubmit[i];
+      if (result.status === 'fulfilled') {
+        submitted.push(result.value);
+      } else {
+        submitFailures.push({
+          index: source.index,
+          taskId: `submit-failed-${source.index + 1}`,
+          prompt: source.prompt,
+          displayLabel: source.displayLabel,
+          submittedAt,
+          status: 'failed',
+          rawStatus: '',
+          url: '',
+          time: null,
+          error: result.reason?.message || '提交生成任务失败',
+          refreshing: false,
+        });
+      }
+    });
+
+    state.submittedCount = toSubmit.length;
+    if (submitted.length > 0) logMsg(`✅ ${submitted.length} 个任务已提交`, 'success');
+    if (submitFailures.length > 0) logMsg(`❌ ${submitFailures.length} 个任务提交失败，将计入最终结果`, 'error');
+    updateTaskRecords([
+      ...submitted.map(s => ({
+        index: s.index,
+        taskId: s.taskId,
+        prompt: s.prompt,
+        displayLabel: s.displayLabel,
+        submittedAt,
+        status: 'submitted',
+        rawStatus: '',
+        url: '',
+        time: null,
+        error: '',
+        refreshing: false,
+      })),
+      ...submitFailures,
+    ]);
 
     // Task chips
-	    state.taskChips = submitted.map(s => ({ index: s.index, done: false, fail: false, timeout: false, promptSnippet: s.displayLabel }));
+	    const submitFailureIndexes = new Set(submitFailures.map(s => s.index));
+	    state.taskChips = toSubmit.map(s => ({
+	      index: s.index,
+	      done: false,
+	      fail: submitFailureIndexes.has(s.index),
+	      timeout: false,
+	      promptSnippet: s.displayLabel,
+	    }));
     renderTaskChips(state.taskChips);
+
+    if (submitted.length === 0) {
+      updatePollSummary(toSubmit.length);
+      showProgress(false);
+      return;
+    }
 
     // Step 3: Poll all
     logMsg(`轮询所有任务，最长约 ${formatPollWindow(INITIAL_POLL_MAX_ATTEMPTS)}…`);
@@ -2775,12 +3046,13 @@ async function generate() {
       submitted.map(s => pollOne(s.taskId, { maxAttempts: INITIAL_POLL_MAX_ATTEMPTS }).then(r => ({ index: s.index, ...r, prompt: s.prompt })))
     );
 
-    handlePollResults(submitted, pollResults, count);
+    handlePollResults(submitted, pollResults, toSubmit.length);
     showProgress(false);
   } catch (err) {
     logMsg(`❌ ${err.message}`, 'error');
     setStatus('失败', 'error');
     showProgress(false);
+    showGenerationSummary(state.submittedCount || count, err.message || '生成失败');
   } finally {
     generateBtn.disabled = false;
     generateBtn.textContent = '🎨 开始生成';
@@ -2827,6 +3099,7 @@ continuePollBtn.addEventListener('click', async () => {
   } catch (err) {
     logMsg(`❌ ${err.message}`, 'error');
     setStatus('继续轮询失败', 'error');
+    showGenerationSummary(totalCount, err.message || '继续轮询失败');
   } finally {
     showProgress(false);
     generateBtn.disabled = false;
@@ -2856,11 +3129,13 @@ clearBtn.addEventListener('click', () => {
   globalPrompt.value = '';
   resultArea.classList.remove('show');
   closeModalPreview();
+  closeGenerationSummary();
   state.results = [];
   state.pendingPolls = [];
   state.taskChips = [];
   state.tasks = [];
   state.submittedCount = 0;
+  state.lastGenerationSummary = null;
   state.previewIndex = 0;
   state.promptMeta = [];
   state.planSignature = '';
@@ -2925,9 +3200,10 @@ downloadSelectedBtn.addEventListener('click', async () => {
   logMsg(`开始下载 ${selected.length} 张选中图片`, 'info');
 });
 
-// ============ INIT ============
-updateResolutionNote();
-initCustomSelect({ input: salesRegion, trigger: salesRegionTrigger, menu: salesRegionMenu, options: salesRegionOptions });
+	// ============ INIT ============
+	initSavedApiKey();
+	updateResolutionNote();
+	initCustomSelect({ input: salesRegion, trigger: salesRegionTrigger, menu: salesRegionMenu, options: salesRegionOptions });
 initCustomSelect({ input: ecommercePlatform, trigger: ecommercePlatformTrigger, menu: ecommercePlatformMenu, options: platformOptions });
 renderImageTypeGrid();
 rebuildPromptCards();
