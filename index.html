@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=v20260630-05">
-<meta name="theme-color" content="#0f0f13">
-<title>批量图片生成工具</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=v20260630-08">
+<meta name="theme-color" content="#f6f8fb">
+<title>灵感电商</title>
 <style>
-  :root { --primary: #6366f1; --primary-hover: #4f46e5; --bg: #0f0f13; --card: #1a1a22; --border: #2a2a3a; --text: #e4e4ec; --text-muted: #8888a0; --success: #22c55e; --error: #ef4444; --warning: #f59e0b; }
+  :root { --primary: #0f766e; --primary-hover: #0b5f59; --bg: #f6f8fb; --card: #ffffff; --border: #d9e3ea; --text: #18212f; --text-muted: #64748b; --success: #16a34a; --error: #e5484d; --warning: #d97706; --accent: #ff6b4a; --info: #2563eb; --surface: #eef6f6; --surface-strong: #d9eeee; --focus-ring: rgba(15,118,110,.16); --shadow: 0 18px 44px rgba(30,41,59,.08); }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:radial-gradient(circle at 10% -10%,rgba(20,184,166,.18),transparent 34%),radial-gradient(circle at 92% 4%,rgba(255,107,74,.14),transparent 30%),linear-gradient(180deg,#fbfdff 0%,var(--bg) 38%,#eef6f6 100%); color:var(--text); min-height:100vh; display:flex; flex-direction:column; }
   .container { max-width:960px; margin:0 auto; padding:24px 16px; width:100%; }
   header { text-align:center; padding:32px 0 16px; }
-  header h1 { font-size:28px; font-weight:700; background:linear-gradient(135deg,#818cf8,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  header h1 { font-size:28px; font-weight:700; background:linear-gradient(135deg,#0f766e 0%,#2563eb 48%,#ff6b4a 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   header p { color:var(--text-muted); margin-top:6px; font-size:14px; }
   .version-badge { display:inline-flex; align-items:center; margin-top:10px; padding:4px 10px; border:1px solid rgba(129,140,248,.32); border-radius:99px; background:rgba(99,102,241,.1); color:#c7d2fe; font-size:12px; font-weight:600; letter-spacing:0; }
   .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; transition:border-color .2s; }
@@ -297,6 +297,71 @@
   .summary-empty { color:var(--text-muted); font-size:12px; padding:10px; border:1px dashed rgba(255,255,255,.12); border-radius:8px; background:#101018; }
   .summary-actions { display:flex; justify-content:flex-end; gap:8px; padding:14px 18px 18px; border-top:1px solid rgba(255,255,255,.07); flex-wrap:wrap; }
   .summary-actions .btn:disabled { opacity:.45; cursor:not-allowed; }
+  /* Theme refresh: bright commerce studio for "灵感电商" */
+  header { padding:34px 0 18px; }
+  header h1 { letter-spacing:0; }
+  .version-badge { border-color:rgba(15,118,110,.22); background:rgba(240,253,250,.78); color:#0f766e; box-shadow:0 8px 22px rgba(15,118,110,.08); }
+  .card, .prompt-card, .image-type-card, .result-item, .task-list-panel, .summary-dialog, .layout-modal { background:rgba(255,255,255,.94); border-color:var(--border); box-shadow:var(--shadow); }
+  .card { border-radius:10px; }
+  .card:hover, .prompt-card:hover { border-color:#a8cbc8; box-shadow:0 20px 50px rgba(15,118,110,.1); }
+  .card-title { color:#122033; }
+  .card-title .badge { background:var(--primary); color:white; }
+  label { color:#536477; }
+  input, select, textarea, .select-trigger, .num-input-wrap, .type-count-wrap { background:#fbfdff; border-color:var(--border); color:var(--text); }
+  input:focus, select:focus, textarea:focus, .select-trigger.open { border-color:var(--primary); box-shadow:0 0 0 3px var(--focus-ring); }
+  input::placeholder, textarea::placeholder { color:#9aa9b8; }
+  .btn-primary { background:linear-gradient(135deg,#0f766e,#13a394); box-shadow:0 10px 22px rgba(15,118,110,.2); }
+  .btn-primary:hover { background:linear-gradient(135deg,#0b5f59,#0f8f83); transform:translateY(-1px); }
+  .btn-secondary { background:var(--surface); color:#17413d; border:1px solid #c9dfdd; }
+  .btn-secondary:hover { background:var(--surface-strong); }
+  .btn-outline { background:rgba(255,255,255,.72); border-color:#cbd8df; color:#334155; }
+  .btn-outline:hover { border-color:var(--primary); color:var(--primary); background:#f0fdfa; }
+  .btn-success { background:#16a34a; }
+  .btn-danger { background:#e5484d; }
+  .upload-zone { background:linear-gradient(180deg,#ffffff,#f7fbfb); border-color:#b8d7d3; }
+  .upload-zone:hover, .upload-zone.dragover { border-color:var(--primary); background:linear-gradient(180deg,#f0fdfa,#fff7f3); }
+  .upload-zone.has-file { background:#f0fdf4; }
+  .preview-item.drag-over { box-shadow:0 0 0 2px rgba(15,118,110,.9), 0 10px 26px rgba(15,23,42,.18); }
+  .preview-item img, .layout-picked-thumb, .prompt-card .card-head .img-preview { background:#f8fafc; }
+  .mode-tabs { background:#e9f3f2; border:1px solid #d7e6e4; }
+  .mode-tab.active { background:white; color:#0f766e; box-shadow:0 4px 12px rgba(15,118,110,.12); }
+  .mode-tab:hover:not(.active) { color:#17413d; }
+  .prompt-card, .image-type-card { background:#fbfdff; }
+  .prompt-card .card-head .num-badge { background:linear-gradient(135deg,#0f766e,#2563eb); }
+  .prompt-card .type-label { color:#b45309; border-color:rgba(217,119,6,.28); background:rgba(255,251,235,.9); }
+  .template-overlay, .layout-modal-overlay, .summary-overlay { background:rgba(15,23,42,.36); backdrop-filter:blur(12px); }
+  .template-picker { background:#fbfdff; border-color:#d9e3ea; color:var(--text); box-shadow:0 24px 70px rgba(15,23,42,.18); }
+  .template-picker-title .mark { background:linear-gradient(135deg,#0f766e,#ff6b4a); box-shadow:0 12px 26px rgba(15,118,110,.18); }
+  .template-card { background:white; border-color:#d9e3ea; }
+  .template-card:hover { border-color:#58b7ad; box-shadow:0 16px 34px rgba(15,118,110,.13); }
+  .template-close, .layout-modal-close, .summary-close { background:#eef6f6; color:#33514e; }
+  .template-close:hover, .layout-modal-close:hover, .summary-close:hover { background:#d9eeee; color:#0f3f3a; }
+  .image-type-card.active, .layout-option.active { border-color:var(--primary); background:linear-gradient(180deg,#f0fdfa,#fff); }
+  .layout-picker-row, .summary-head, .summary-actions { border-color:#e6edf2; }
+  .layout-tabs { background:#edf5f5; border-color:#d7e6e4; box-shadow:none; }
+  .layout-tab.active { background:var(--primary); color:white; }
+  .layout-option, .layout-page-btn { background:white; border-color:#d9e3ea; color:var(--text); }
+  .layout-option:hover, .layout-page-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .layout-option img, .layout-upload-option.has-custom .layout-upload-visual { background:#f8fafc; }
+  .layout-upload-visual { border-color:#7bc8c0; background:linear-gradient(135deg,#f0fdfa,#fff7f3); color:#0f766e; }
+  .select-menu { background:white; border-color:#d9e3ea; box-shadow:0 18px 42px rgba(15,23,42,.16); }
+  .select-option:hover, .select-option.selected { background:#eaf7f5; }
+  .log { background:#13211f; border-color:#244340; color:#dff6f1; box-shadow:inset 0 1px 0 rgba(255,255,255,.05); }
+  .log .info { color:#93c5fd; }
+  .result-item .img-wrap, .task-preview-box { background:#f7fafb; }
+  .result-item .meta, .result-item .actions, .batch-actions { background:#f8fbfb; border-color:#e6edf2; }
+  .result-item:hover { border-color:var(--primary); box-shadow:0 12px 26px rgba(15,118,110,.1); }
+  .progress-bar { background:#dce9e8; }
+  .progress-bar .fill { background:linear-gradient(90deg,#0f766e,#2563eb,#ff6b4a); }
+  .task-chip { background:white; }
+  .task-table th { background:#f1f7f7; color:#526371; }
+  .task-table th, .task-table td { border-bottom-color:#e6edf2; }
+  .task-id { color:#2563eb; }
+  .task-status.polling, .task-status.processing, .task-status.refreshing, .task-status.submitted { border-color:rgba(37,99,235,.35); color:#2563eb; background:rgba(37,99,235,.08); }
+  .task-refresh-btn { background:white; color:#334155; }
+  .footer-version { color:#0f766e; }
+  .modal-overlay { background:rgba(15,23,42,.82); }
+  .summary-count, .summary-row, .summary-empty { background:#fbfdff; border-color:#e0e9ee; }
 	  @media (max-width:640px) { .form-row-2,.form-row-3{grid-template-columns:1fr} .api-key-row{flex-direction:column} .api-key-row .btn{width:100%} .prompt-input-row{grid-template-columns:1fr} .prompt-template-btn{min-height:42px; flex-direction:row} .template-picker{padding:16px; max-height:90vh} .template-picker-title{font-size:20px} .template-grid{grid-template-columns:1fr} .image-type-grid{grid-template-columns:1fr} .result-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .batch-actions{flex-direction:column} .task-list-head{align-items:flex-start; flex-direction:column} .task-table{min-width:700px} .summary-counts{grid-template-columns:1fr} .summary-row{grid-template-columns:1fr; gap:4px} .summary-actions{justify-content:stretch} .summary-actions .btn{width:100%; justify-content:center} }
 </style>
 </head>
@@ -362,7 +427,7 @@
 
 <div class="container">
   <header>
-    <h1>🎨 批量图片生成器</h1>
+    <h1>🎨 灵感电商</h1>
     <p>每张图单独设置提示词 · 批量并行生成</p>
     <div class="version-badge" id="appVersionBadge">版本 </div>
   </header>
@@ -584,13 +649,13 @@
     </div>
   </div>
 
-	  <footer>批量图片生成工具 <span class="footer-version" id="footerVersion">v20260630-05</span></footer>
+	  <footer>灵感电商 <span class="footer-version" id="footerVersion">v20260630-08</span></footer>
 </div>
 
 <script src="layout-presets.js"></script>
 <script>
-	const APP_VERSION = 'v20260630-05';
-document.title = `批量图片生成工具 ${APP_VERSION}`;
+	const APP_VERSION = 'v20260630-08';
+document.title = '灵感电商';
 document.getElementById('appVersionBadge').textContent = `版本 ${APP_VERSION}`;
 document.getElementById('footerVersion').textContent = APP_VERSION;
 
@@ -2717,17 +2782,17 @@ function openImagesFallbackTab(images, reason = '') {
 <title>图片下载兜底</title>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #11131a; color: #eef1f8; }
+  body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 10% -10%, rgba(20,184,166,.18), transparent 34%), radial-gradient(circle at 92% 4%, rgba(255,107,74,.14), transparent 30%), #f6f8fb; color: #18212f; }
   header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 0 auto 16px; max-width: 1180px; }
   h1 { margin: 0 0 6px; font-size: 22px; }
-  p { margin: 0; color: #a8afc2; line-height: 1.5; }
-  button, a.button { border: 0; border-radius: 8px; padding: 10px 14px; background: #22c55e; color: white; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap; }
+  p { margin: 0; color: #64748b; line-height: 1.5; }
+  button, a.button { border: 0; border-radius: 8px; padding: 10px 14px; background: linear-gradient(135deg, #0f766e, #13a394); color: white; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap; box-shadow: 0 10px 22px rgba(15,118,110,.18); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; max-width: 1180px; margin: 0 auto; }
-  .card { background: #1b1f2b; border: 1px solid #30384b; border-radius: 10px; overflow: hidden; }
-  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; border-bottom: 1px solid #30384b; }
-  .card-head a { color: #8ab4ff; font-size: 13px; }
-  img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #090b10; }
-  textarea { display: block; width: 100%; min-height: 68px; resize: vertical; border: 0; border-top: 1px solid #30384b; padding: 8px; background: #121620; color: #a8afc2; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .card { background: rgba(255,255,255,.94); border: 1px solid #d9e3ea; border-radius: 10px; overflow: hidden; box-shadow: 0 18px 44px rgba(30,41,59,.08); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; border-bottom: 1px solid #e6edf2; }
+  .card-head a { color: #2563eb; font-size: 13px; }
+  img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #f7fafb; }
+  textarea { display: block; width: 100%; min-height: 68px; resize: vertical; border: 0; border-top: 1px solid #e6edf2; padding: 8px; background: #fbfdff; color: #64748b; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   @media (max-width: 640px) { header { flex-direction: column; } button, a.button { width: 100%; text-align: center; } }
 </style>
 </head>
