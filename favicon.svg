@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="批量图片生成工具">
+  <defs>
+    <linearGradient id="edge" x1="8" y1="7" x2="56" y2="57" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#a3e635"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#09090b"/>
+  <rect x="7.5" y="7.5" width="49" height="49" rx="11.5" fill="#0f1117" stroke="url(#edge)" stroke-width="3"/>
+  <path d="M18 21h28M18 31h28M18 41h28M23 16v30M33 16v30M43 16v30" stroke="#1f2937" stroke-width="1.4" opacity=".62"/>
+  <path d="m20 27 7 5-7 5" fill="none" stroke="#67e8f9" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 37h12" stroke="#a3e635" stroke-width="4.2" stroke-linecap="round"/>
+  <rect x="46" y="24" width="4" height="16" rx="2" fill="#f8fafc"/>
+</svg>
